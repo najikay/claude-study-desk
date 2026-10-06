@@ -1,0 +1,248 @@
+{
+  "schemaVersion": 1,
+  "claudeVersion": "2.1.291",
+  "startedAt": "2026-10-06T10:25:36.455Z",
+  "durationSeconds": 202,
+  "costUsd": 0.5990298,
+  "partial": false,
+  "suite": {
+    "root": "/home/naji4/projects/claude-study-desk",
+    "ablation": "none",
+    "judgeModel": "sonnet",
+    "caseFilter": "study-plan",
+    "threshold": 1,
+    "concurrency": 1,
+    "plugins": [
+      {
+        "name": "study-desk",
+        "version": "0.1.0",
+        "path": "/home/naji4/projects/claude-study-desk"
+      }
+    ]
+  },
+  "cases": [
+    {
+      "name": "study-plan",
+      "dir": "evals/study-plan",
+      "source": "prose",
+      "promptMarkdown": "Today is Monday 2026-10-12. My mobile robotics exam is on Monday 2026-10-19. I can do 2 hours a day on weekdays and 4 hours on Saturday, nothing on Sunday. My weak spot is calibration (4.5). Plan my revision from these notes.\n\nTable of contents of the notes (sizes in pages): 4.1 Differential drive (2), 4.2 Pose update (3), 4.3 Error growth (2), 4.4 Sources of error (2), 4.5 Calibration (4). Lecture 5: Range sensors (6). Lecture 6: Probabilistic localisation (8).",
+      "runsPerCase": 3,
+      "timeoutSeconds": 300,
+      "maxTurns": 8,
+      "graders": [
+        {
+          "name": "dates",
+          "type": "llm",
+          "weight": 2,
+          "graderMarkdown": "This grader checks one thing: the plan's dates. The judge sees only the answer. For reference: today is Monday 2026-10-12 and the exam is Monday 2026-10-19, so the plan covers 2026-10-12 to 2026-10-18 (seven days: Mon 12, Tue 13, Wed 14, Thu 15, Fri 16, Sat 17, Sun 18). Sunday has no hours.\n\nPASS only if the plan's table runs over those dates with the correct weekdays, gives Sunday 2026-10-18 no study hours (or marks it free), and the last working day before the exam (Saturday 17 or, if Sunday is used for nothing, the final planned day) contains repeats only and nothing new. A row for the exam day itself (Monday 2026-10-19, marked as the exam) is fine. FAIL on a wrong weekday, a study day outside the range, or new material on the final planned day.",
+          "config": {
+            "criteria": "This grader checks one thing: the plan's dates. The judge sees only the answer. For reference: today is Monday 2026-10-12 and the exam is Monday 2026-10-19, so the plan covers 2026-10-12 to 2026-10-18 (seven days: Mon 12, Tue 13, Wed 14, Thu 15, Fri 16, Sat 17, Sun 18). Sunday has no hours.\n\nPASS only if the plan's table runs over those dates with the correct weekdays, gives Sunday 2026-10-18 no study hours (or marks it free), and the last working day before the exam (Saturday 17 or, if Sunday is used for nothing, the final planned day) contains repeats only and nothing new. A row for the exam day itself (Monday 2026-10-19, marked as the exam) is fine. FAIL on a wrong weekday, a study day outside the range, or new material on the final planned day.",
+            "focus": "last_message"
+          }
+        },
+        {
+          "name": "fit",
+          "type": "llm",
+          "weight": 2,
+          "graderMarkdown": "This grader checks one thing: the hours add up and the weak spot comes first. The judge sees only the answer. For reference: the user has 2 hours on each of Mon 12, Tue 13, Wed 14, Thu 15, Fri 16 and 4 hours on Sat 17: 14 hours in all. The weak spot is section 4.5 Calibration.\n\nPASS only if ALL hold: the per-day hours never exceed what the user gave (2 on weekdays, 4 on Saturday); the plan states the total hours it needs and either fits in 14 or says plainly what does not fit; section 4.5 is scheduled on the first day and repeated at least once later. FAIL otherwise.",
+          "config": {
+            "criteria": "This grader checks one thing: the hours add up and the weak spot comes first. The judge sees only the answer. For reference: the user has 2 hours on each of Mon 12, Tue 13, Wed 14, Thu 15, Fri 16 and 4 hours on Sat 17: 14 hours in all. The weak spot is section 4.5 Calibration.\n\nPASS only if ALL hold: the per-day hours never exceed what the user gave (2 on weekdays, 4 on Saturday); the plan states the total hours it needs and either fits in 14 or says plainly what does not fit; section 4.5 is scheduled on the first day and repeated at least once later. FAIL otherwise.",
+            "focus": "last_message"
+          }
+        },
+        {
+          "name": "no-promise",
+          "type": "llm",
+          "weight": 1,
+          "graderMarkdown": "This grader checks one thing: no predicted outcome. The judge sees only the answer. FAIL if the plan says or implies what grade or result the user will get (\"you'll be ready\", \"you'll pass\", \"this guarantees\"). A plain statement that the plan covers all the material is fine. Otherwise PASS.",
+          "config": {
+            "criteria": "This grader checks one thing: no predicted outcome. The judge sees only the answer. FAIL if the plan says or implies what grade or result the user will get (\"you'll be ready\", \"you'll pass\", \"this guarantees\"). A plain statement that the plan covers all the material is fine. Otherwise PASS.",
+            "focus": "last_message"
+          }
+        }
+      ],
+      "arms": {
+        "with": [
+          {
+            "score": 1,
+            "passed": true,
+            "turns": 3,
+            "costUsd": 0.1766186,
+            "judgeCostUsd": 0.04197599999999999,
+            "durationSeconds": 53,
+            "startedAt": "2026-10-06T10:25:36.503Z",
+            "error": null,
+            "tracePath": "/tmp/claude-eval-e6clGQ/out/trace.jsonl",
+            "skippedPaidGraders": false,
+            "graders": [
+              {
+                "name": "dates",
+                "passed": true,
+                "weight": 2,
+                "explanation": "judge votes: PASS PASS PASS",
+                "withOnly": false,
+                "scored": true,
+                "judgeVotes": [
+                  true,
+                  true,
+                  true
+                ],
+                "evidence": "**7 days until the exam (Mon 12 → Mon 19), 14 h available, and the plan needs about 12¼ h. That leaves about 1¾ h spare for things that slip.**\n\n**How I sized it:** your notes come to 27 pages. I've assumed a first read takes about 15 minutes per page and a repeat takes about a third of that. That rate is my guess, so check it on Monday: if 4.1 takes you much longer than 30 minutes, see \"What does not fit\" below.\n\n**Order:** I've put calibration (4.5) on day one and come back to it five times. I'm also covering 4.1 (differential drive) and 4.4 (sources of error) just before it. That's my reading, not something your notes say: calibration probably corrects the errors listed in 4.4 using the drive model from 4.1. The rest follows your notes' order. Sunday is your day off, so **Saturday is the last study day and has repeats only, nothing new.**\n\n| date | hours | first pass | repeats | how |\n|---|---|---|---|---|\n| Mon 12 Oct | 2 | 4.1 Differential drive (0.5 h), 4.4 Sources of error (0.5 h), 4.5 Calibration part 1 (1 h) | none | Work every 4.5 derivation by hand |\n| Tue 13 Oct | 2 | 4.5 Calibration part 2 (0.5 h), 4.2 Pose update (0.75 h), 4.3 Error growth (0.5 h) | none | Do the pose-update equations by hand. 0.25 h spare |\n| Wed 14 Oct | 2 | Lecture 5 Range sensors (1.5 h) | 4.1 + 4.4 (0.25 h), **4.5** (0.25 h) | Cards for 4.1 and 4.4, short quiz on 4.5 |\n| Thu 15 Oct | 2 | Lecture 6 Probabilistic localisation part 1 (1.5 h) | 4.2 + 4.3 (0.5 h) | Cards, plus re-derive the pose update without notes |\n| Fri 16 Oct | 2 | Lecture 6 part 2 (0.5 h) | **4.5** (0.5 h), Lecture 5 (0.5 h) | Quiz. **0.5 h spare** |\n| Sat 17 Oct | 4 | none | **4.5** (0.75 h), 4.1–4.4 (0.75 h), Lecture 5 (0.5 h), Lecture 6 (1 h) | Quiz or mock paper across all sections. **1 h spare** |\n| Sun 18 Oct | 0 | none | none | Day off |\n| Mon 19 Oct | | **Exam** | | |\n\nNormally each section gets a repeat about two days after the first pass and another about a week later. You only have a week, so the gaps are shorter. Lecture 6 only gets one repeat because it comes last.\n\n**What does not fit:** everything fits at 15 minutes per page. If pages take you nearer 25 minutes, you'll need about 4 h more than you have. In that case, use the spare slots first. If that's still not enough, skim Lecture 6 instead of working through it, and keep the 4.5 time as it is.\n\n**How to use it:** tick off each row when you finish it. On each day, ask me for cards (study-cards) or a quiz (study-quiz) on that day's repeats. I only have your table of contents, not the notes themselves, so paste the relevant pages each time. The cards and questions will come from what you paste, not from my own knowledge of the subject. The plan makes sure you cover all the material, but it can't predict your result.\n\nOne thing to check: you said today is Monday 12 October, but my system clock says 6 October. I've used your date. If it's actually the 6th, you have another week, so tell me and I'll spread the plan out."
+              },
+              {
+                "name": "fit",
+                "passed": true,
+                "weight": 2,
+                "explanation": "judge votes: PASS PASS PASS",
+                "withOnly": false,
+                "scored": true,
+                "judgeVotes": [
+                  true,
+                  true,
+                  true
+                ],
+                "evidence": "**7 days until the exam (Mon 12 → Mon 19), 14 h available, and the plan needs about 12¼ h. That leaves about 1¾ h spare for things that slip.**\n\n**How I sized it:** your notes come to 27 pages. I've assumed a first read takes about 15 minutes per page and a repeat takes about a third of that. That rate is my guess, so check it on Monday: if 4.1 takes you much longer than 30 minutes, see \"What does not fit\" below.\n\n**Order:** I've put calibration (4.5) on day one and come back to it five times. I'm also covering 4.1 (differential drive) and 4.4 (sources of error) just before it. That's my reading, not something your notes say: calibration probably corrects the errors listed in 4.4 using the drive model from 4.1. The rest follows your notes' order. Sunday is your day off, so **Saturday is the last study day and has repeats only, nothing new.**\n\n| date | hours | first pass | repeats | how |\n|---|---|---|---|---|\n| Mon 12 Oct | 2 | 4.1 Differential drive (0.5 h), 4.4 Sources of error (0.5 h), 4.5 Calibration part 1 (1 h) | none | Work every 4.5 derivation by hand |\n| Tue 13 Oct | 2 | 4.5 Calibration part 2 (0.5 h), 4.2 Pose update (0.75 h), 4.3 Error growth (0.5 h) | none | Do the pose-update equations by hand. 0.25 h spare |\n| Wed 14 Oct | 2 | Lecture 5 Range sensors (1.5 h) | 4.1 + 4.4 (0.25 h), **4.5** (0.25 h) | Cards for 4.1 and 4.4, short quiz on 4.5 |\n| Thu 15 Oct | 2 | Lecture 6 Probabilistic localisation part 1 (1.5 h) | 4.2 + 4.3 (0.5 h) | Cards, plus re-derive the pose update without notes |\n| Fri 16 Oct | 2 | Lecture 6 part 2 (0.5 h) | **4.5** (0.5 h), Lecture 5 (0.5 h) | Quiz. **0.5 h spare** |\n| Sat 17 Oct | 4 | none | **4.5** (0.75 h), 4.1–4.4 (0.75 h), Lecture 5 (0.5 h), Lecture 6 (1 h) | Quiz or mock paper across all sections. **1 h spare** |\n| Sun 18 Oct | 0 | none | none | Day off |\n| Mon 19 Oct | | **Exam** | | |\n\nNormally each section gets a repeat about two days after the first pass and another about a week later. You only have a week, so the gaps are shorter. Lecture 6 only gets one repeat because it comes last.\n\n**What does not fit:** everything fits at 15 minutes per page. If pages take you nearer 25 minutes, you'll need about 4 h more than you have. In that case, use the spare slots first. If that's still not enough, skim Lecture 6 instead of working through it, and keep the 4.5 time as it is.\n\n**How to use it:** tick off each row when you finish it. On each day, ask me for cards (study-cards) or a quiz (study-quiz) on that day's repeats. I only have your table of contents, not the notes themselves, so paste the relevant pages each time. The cards and questions will come from what you paste, not from my own knowledge of the subject. The plan makes sure you cover all the material, but it can't predict your result.\n\nOne thing to check: you said today is Monday 12 October, but my system clock says 6 October. I've used your date. If it's actually the 6th, you have another week, so tell me and I'll spread the plan out."
+              },
+              {
+                "name": "no-promise",
+                "passed": true,
+                "weight": 1,
+                "explanation": "judge votes: PASS PASS PASS",
+                "withOnly": false,
+                "scored": true,
+                "judgeVotes": [
+                  true,
+                  true,
+                  true
+                ],
+                "evidence": "**7 days until the exam (Mon 12 → Mon 19), 14 h available, and the plan needs about 12¼ h. That leaves about 1¾ h spare for things that slip.**\n\n**How I sized it:** your notes come to 27 pages. I've assumed a first read takes about 15 minutes per page and a repeat takes about a third of that. That rate is my guess, so check it on Monday: if 4.1 takes you much longer than 30 minutes, see \"What does not fit\" below.\n\n**Order:** I've put calibration (4.5) on day one and come back to it five times. I'm also covering 4.1 (differential drive) and 4.4 (sources of error) just before it. That's my reading, not something your notes say: calibration probably corrects the errors listed in 4.4 using the drive model from 4.1. The rest follows your notes' order. Sunday is your day off, so **Saturday is the last study day and has repeats only, nothing new.**\n\n| date | hours | first pass | repeats | how |\n|---|---|---|---|---|\n| Mon 12 Oct | 2 | 4.1 Differential drive (0.5 h), 4.4 Sources of error (0.5 h), 4.5 Calibration part 1 (1 h) | none | Work every 4.5 derivation by hand |\n| Tue 13 Oct | 2 | 4.5 Calibration part 2 (0.5 h), 4.2 Pose update (0.75 h), 4.3 Error growth (0.5 h) | none | Do the pose-update equations by hand. 0.25 h spare |\n| Wed 14 Oct | 2 | Lecture 5 Range sensors (1.5 h) | 4.1 + 4.4 (0.25 h), **4.5** (0.25 h) | Cards for 4.1 and 4.4, short quiz on 4.5 |\n| Thu 15 Oct | 2 | Lecture 6 Probabilistic localisation part 1 (1.5 h) | 4.2 + 4.3 (0.5 h) | Cards, plus re-derive the pose update without notes |\n| Fri 16 Oct | 2 | Lecture 6 part 2 (0.5 h) | **4.5** (0.5 h), Lecture 5 (0.5 h) | Quiz. **0.5 h spare** |\n| Sat 17 Oct | 4 | none | **4.5** (0.75 h), 4.1–4.4 (0.75 h), Lecture 5 (0.5 h), Lecture 6 (1 h) | Quiz or mock paper across all sections. **1 h spare** |\n| Sun 18 Oct | 0 | none | none | Day off |\n| Mon 19 Oct | | **Exam** | | |\n\nNormally each section gets a repeat about two days after the first pass and another about a week later. You only have a week, so the gaps are shorter. Lecture 6 only gets one repeat because it comes last.\n\n**What does not fit:** everything fits at 15 minutes per page. If pages take you nearer 25 minutes, you'll need about 4 h more than you have. In that case, use the spare slots first. If that's still not enough, skim Lecture 6 instead of working through it, and keep the 4.5 time as it is.\n\n**How to use it:** tick off each row when you finish it. On each day, ask me for cards (study-cards) or a quiz (study-quiz) on that day's repeats. I only have your table of contents, not the notes themselves, so paste the relevant pages each time. The cards and questions will come from what you paste, not from my own knowledge of the subject. The plan makes sure you cover all the material, but it can't predict your result.\n\nOne thing to check: you said today is Monday 12 October, but my system clock says 6 October. I've used your date. If it's actually the 6th, you have another week, so tell me and I'll spread the plan out."
+              }
+            ]
+          },
+          {
+            "score": 0.6,
+            "passed": false,
+            "turns": 3,
+            "costUsd": 0.23050059999999997,
+            "judgeCostUsd": 0.04133000000000001,
+            "durationSeconds": 86,
+            "startedAt": "2026-10-06T10:26:29.628Z",
+            "error": null,
+            "tracePath": "/tmp/claude-eval-VBsOtb/out/trace.jsonl",
+            "skippedPaidGraders": false,
+            "graders": [
+              {
+                "name": "dates",
+                "passed": false,
+                "weight": 2,
+                "explanation": "judge votes: FAIL FAIL FAIL",
+                "withOnly": false,
+                "scored": true,
+                "judgeVotes": [
+                  false,
+                  false,
+                  false
+                ],
+                "evidence": "**7 days until the exam (Mon 12 – Sun 18). You have 14 h. Covering everything at full pace with repeats and some spare time would take about 15 h, so one thing has to give (see \"What doesn't fit\").**\n\nI've assumed you read about **3 pages an hour** (20 min per page), since these are technical notes with equations. If you're faster or slower, tell me and I'll redo the plan.\n\n**Order and why:**\n- **Weak spot first.** Calibration (4.5) starts on day 1 so it can be repeated on Wed and Sat. I've put it with 4.4 Sources of error. Going only by the titles, my guess is that calibration corrects those errors, so they belong together.\n- **Then the rest in the notes' order.** 4.1 → 4.2 → 4.3, then Lecture 5, then Lecture 6.\n- **Saturday has nothing new.** It's your last study day, because Sunday is off. It's for repeats only.\n\n| Date | Hours | First pass | Repeats | How |\n|---|---|---|---|---|\n| Mon 12 Oct | 2 h | 4.4 Sources of error (40 min), **4.5 Calibration** (80 min) | – | Read, then redo 4.5's worked steps by hand without the notes |\n| Tue 13 Oct | 2 h | 4.1 Differential drive (40 min), 4.2 Pose update (60 min) | – | Derive the pose-update equations by hand. **20 min free** for anything that slipped |\n| Wed 14 Oct | 2 h | 4.3 Error growth (40 min) | **4.5** (30 min), 4.4 (15 min), 4.1 + 4.2 (35 min) | Cards for 4.1, 4.2, 4.4 and 4.5. Quiz on 4.5 |\n| Thu 15 Oct | 2 h | Lecture 5 Range sensors (all 6 pages) | – | Read, then make cards for the key terms |\n| Fri 16 Oct | 2 h | Lecture 6 Probabilistic localisation, **skimmed** (8 pages in 2 h) | – | Read the main ideas fully and skim the detail. Make cards as you go |\n| Sat 17 Oct | 4 h | — nothing new — | **4.5** (30 min), 4.1–4.4 (65 min), Lecture 5 (40 min), Lecture 6 (55 min) | Mixed quiz across all sections, weighted toward 4.5. **50 min free**: a past paper if you have one, or more calibration questions |\n| Sun 18 Oct | 0 h | – | – | Rest |\n| **Mon 19 Oct** | | **Exam** | | |\n\n**What doesn't fit:** At 3 pages an hour, Lecture 6 needs about 2 h 40 min, but Friday only has 2 h. As written, the plan skims it. Your other options:\n- **Start Lecture 5 earlier.** Skip Wednesday's repeat of 4.1 + 4.2 and use those 35 min to begin Lecture 5. That frees time for a full read of Lecture 6, but 4.1 and 4.2 then get only one repeat (Saturday).\n- **Find about 40 extra minutes** before Friday, for example a short session on Sunday the 11th or an extra slot one evening.\n\nLectures 5 and 6 come last, so either way they only get one repeat (Saturday). The schedule doesn't leave room for more.\n\n**How to use it:** Tick off each day's row when it's done. If something slips, use Tuesday's free 20 minutes first, then Saturday's 50. For the repeat days, paste the text of those sections here and ask me for cards or a quiz on them. So far I only have the table of contents, so I can't write questions until I see the notes themselves.\n\nThis plan makes sure you cover all the material before the exam. It can't predict your result."
+              },
+              {
+                "name": "fit",
+                "passed": true,
+                "weight": 2,
+                "explanation": "judge votes: PASS PASS PASS",
+                "withOnly": false,
+                "scored": true,
+                "judgeVotes": [
+                  true,
+                  true,
+                  true
+                ],
+                "evidence": "**7 days until the exam (Mon 12 – Sun 18). You have 14 h. Covering everything at full pace with repeats and some spare time would take about 15 h, so one thing has to give (see \"What doesn't fit\").**\n\nI've assumed you read about **3 pages an hour** (20 min per page), since these are technical notes with equations. If you're faster or slower, tell me and I'll redo the plan.\n\n**Order and why:**\n- **Weak spot first.** Calibration (4.5) starts on day 1 so it can be repeated on Wed and Sat. I've put it with 4.4 Sources of error. Going only by the titles, my guess is that calibration corrects those errors, so they belong together.\n- **Then the rest in the notes' order.** 4.1 → 4.2 → 4.3, then Lecture 5, then Lecture 6.\n- **Saturday has nothing new.** It's your last study day, because Sunday is off. It's for repeats only.\n\n| Date | Hours | First pass | Repeats | How |\n|---|---|---|---|---|\n| Mon 12 Oct | 2 h | 4.4 Sources of error (40 min), **4.5 Calibration** (80 min) | – | Read, then redo 4.5's worked steps by hand without the notes |\n| Tue 13 Oct | 2 h | 4.1 Differential drive (40 min), 4.2 Pose update (60 min) | – | Derive the pose-update equations by hand. **20 min free** for anything that slipped |\n| Wed 14 Oct | 2 h | 4.3 Error growth (40 min) | **4.5** (30 min), 4.4 (15 min), 4.1 + 4.2 (35 min) | Cards for 4.1, 4.2, 4.4 and 4.5. Quiz on 4.5 |\n| Thu 15 Oct | 2 h | Lecture 5 Range sensors (all 6 pages) | – | Read, then make cards for the key terms |\n| Fri 16 Oct | 2 h | Lecture 6 Probabilistic localisation, **skimmed** (8 pages in 2 h) | – | Read the main ideas fully and skim the detail. Make cards as you go |\n| Sat 17 Oct | 4 h | — nothing new — | **4.5** (30 min), 4.1–4.4 (65 min), Lecture 5 (40 min), Lecture 6 (55 min) | Mixed quiz across all sections, weighted toward 4.5. **50 min free**: a past paper if you have one, or more calibration questions |\n| Sun 18 Oct | 0 h | – | – | Rest |\n| **Mon 19 Oct** | | **Exam** | | |\n\n**What doesn't fit:** At 3 pages an hour, Lecture 6 needs about 2 h 40 min, but Friday only has 2 h. As written, the plan skims it. Your other options:\n- **Start Lecture 5 earlier.** Skip Wednesday's repeat of 4.1 + 4.2 and use those 35 min to begin Lecture 5. That frees time for a full read of Lecture 6, but 4.1 and 4.2 then get only one repeat (Saturday).\n- **Find about 40 extra minutes** before Friday, for example a short session on Sunday the 11th or an extra slot one evening.\n\nLectures 5 and 6 come last, so either way they only get one repeat (Saturday). The schedule doesn't leave room for more.\n\n**How to use it:** Tick off each day's row when it's done. If something slips, use Tuesday's free 20 minutes first, then Saturday's 50. For the repeat days, paste the text of those sections here and ask me for cards or a quiz on them. So far I only have the table of contents, so I can't write questions until I see the notes themselves.\n\nThis plan makes sure you cover all the material before the exam. It can't predict your result."
+              },
+              {
+                "name": "no-promise",
+                "passed": true,
+                "weight": 1,
+                "explanation": "judge votes: PASS PASS PASS",
+                "withOnly": false,
+                "scored": true,
+                "judgeVotes": [
+                  true,
+                  true,
+                  true
+                ],
+                "evidence": "**7 days until the exam (Mon 12 – Sun 18). You have 14 h. Covering everything at full pace with repeats and some spare time would take about 15 h, so one thing has to give (see \"What doesn't fit\").**\n\nI've assumed you read about **3 pages an hour** (20 min per page), since these are technical notes with equations. If you're faster or slower, tell me and I'll redo the plan.\n\n**Order and why:**\n- **Weak spot first.** Calibration (4.5) starts on day 1 so it can be repeated on Wed and Sat. I've put it with 4.4 Sources of error. Going only by the titles, my guess is that calibration corrects those errors, so they belong together.\n- **Then the rest in the notes' order.** 4.1 → 4.2 → 4.3, then Lecture 5, then Lecture 6.\n- **Saturday has nothing new.** It's your last study day, because Sunday is off. It's for repeats only.\n\n| Date | Hours | First pass | Repeats | How |\n|---|---|---|---|---|\n| Mon 12 Oct | 2 h | 4.4 Sources of error (40 min), **4.5 Calibration** (80 min) | – | Read, then redo 4.5's worked steps by hand without the notes |\n| Tue 13 Oct | 2 h | 4.1 Differential drive (40 min), 4.2 Pose update (60 min) | – | Derive the pose-update equations by hand. **20 min free** for anything that slipped |\n| Wed 14 Oct | 2 h | 4.3 Error growth (40 min) | **4.5** (30 min), 4.4 (15 min), 4.1 + 4.2 (35 min) | Cards for 4.1, 4.2, 4.4 and 4.5. Quiz on 4.5 |\n| Thu 15 Oct | 2 h | Lecture 5 Range sensors (all 6 pages) | – | Read, then make cards for the key terms |\n| Fri 16 Oct | 2 h | Lecture 6 Probabilistic localisation, **skimmed** (8 pages in 2 h) | – | Read the main ideas fully and skim the detail. Make cards as you go |\n| Sat 17 Oct | 4 h | — nothing new — | **4.5** (30 min), 4.1–4.4 (65 min), Lecture 5 (40 min), Lecture 6 (55 min) | Mixed quiz across all sections, weighted toward 4.5. **50 min free**: a past paper if you have one, or more calibration questions |\n| Sun 18 Oct | 0 h | – | – | Rest |\n| **Mon 19 Oct** | | **Exam** | | |\n\n**What doesn't fit:** At 3 pages an hour, Lecture 6 needs about 2 h 40 min, but Friday only has 2 h. As written, the plan skims it. Your other options:\n- **Start Lecture 5 earlier.** Skip Wednesday's repeat of 4.1 + 4.2 and use those 35 min to begin Lecture 5. That frees time for a full read of Lecture 6, but 4.1 and 4.2 then get only one repeat (Saturday).\n- **Find about 40 extra minutes** before Friday, for example a short session on Sunday the 11th or an extra slot one evening.\n\nLectures 5 and 6 come last, so either way they only get one repeat (Saturday). The schedule doesn't leave room for more.\n\n**How to use it:** Tick off each day's row when it's done. If something slips, use Tuesday's free 20 minutes first, then Saturday's 50. For the repeat days, paste the text of those sections here and ask me for cards or a quiz on them. So far I only have the table of contents, so I can't write questions until I see the notes themselves.\n\nThis plan makes sure you cover all the material before the exam. It can't predict your result."
+              }
+            ]
+          },
+          {
+            "score": 1,
+            "passed": true,
+            "turns": 3,
+            "costUsd": 0.1919106,
+            "judgeCostUsd": 0.04421199999999999,
+            "durationSeconds": 63,
+            "startedAt": "2026-10-06T10:27:55.329Z",
+            "error": null,
+            "tracePath": "/tmp/claude-eval-CSCA9T/out/trace.jsonl",
+            "skippedPaidGraders": false,
+            "graders": [
+              {
+                "name": "dates",
+                "passed": true,
+                "weight": 2,
+                "explanation": "judge votes: PASS PASS PASS",
+                "withOnly": false,
+                "scored": true,
+                "judgeVotes": [
+                  true,
+                  true,
+                  true
+                ],
+                "evidence": "# Revision plan: mobile robotics, exam Monday 19 Oct 2026\n\n**You have 6 study days and 14 hours (Mon–Fri 2h each, Sat 4h, Sun 0). The full plan needs about 17 hours, so it is about 3 hours short.** The table below fits into 14 hours. \"What does not fit\" explains what that costs.\n\nMy estimate is about 20 minutes per page for a first pass. I can't see the notes themselves, so this is a guess. 27 pages make about 9h of first passes. Two repeats per section add about 6h, and spare time for slips adds about 2h.\n\n(My system clock says 6 Oct, but I've used your date. Mon 12 Oct 2026 is a Monday, so the weekdays below match.)\n\n## Order and why\n1. **4.4 Sources of error, then 4.5 Calibration, on day 1.** Calibration is your weak spot, so it goes first and comes back most often. I'm guessing that calibration builds on 4.4, since the table of contents puts them next to each other. I can't confirm that without seeing the pages.\n2. **4.1 to 4.3**, in the order the notes use.\n3. **Lecture 5, then Lecture 6**, in the order the notes use.\n4. **Saturday is repeats only.** Sunday is off, so Saturday is your last study day before the exam.\n\n## The table\n\n| date | hours | first pass | repeats | how |\n|---|---|---|---|---|\n| Mon 12 Oct | 2h | 4.4 Sources of error (40m), 4.5 Calibration (1h20) | none | Read actively. Write each calibration step out by hand. |\n| Tue 13 Oct | 2h | 4.1 Differential drive (40m), 4.2 Pose update (1h) | 4.5 quick check (20m) | Cards on 4.5. Derive the pose update by hand. |\n| Wed 14 Oct | 2h | 4.3 Error growth (40m) | 4.4 (15m), 4.5 (45m) | Quiz on 4.4 and 4.5. Redo the calibration procedure from a blank page. **20m spare.** |\n| Thu 15 Oct | 2h | Lecture 5 Range sensors (2h) | none | Read actively and note key terms for cards. |\n| Fri 16 Oct | 2h | Lecture 6 Probabilistic localisation, **skimmed** (2h instead of about 2h40) | none | Get the main ideas and the update steps, and mark what you skipped. |\n| Sat 17 Oct | 4h | **nothing new** | 4.5 (45m), 4.1 to 4.3 (40m), 4.4 (10m), L5 (40m), L6 (55m) | Mixed quiz across all sections. Calibration by hand one more time. **30m spare.** |\n| Sun 18 Oct | 0h | none | none | Rest |\n| **Mon 19 Oct** | | **Exam** | | |\n\n## What does not fit\n- **Lecture 6 gets a skim, not a full pass.** It's your biggest section at 8 pages, and the skim saves about 40 minutes.\n- **Most sections get one repeat, not two.** Only 4.4 and 4.5 get two or more. 4.1 to 4.3 and the two lectures get just Saturday's repeat. Lectures 5 and 6 come back after 1–2 days, not the usual 2.\n- **There is less spare time than usual**: 50 minutes in total instead of about 2 hours.\n\n**Your choices:**\n- **Keep the plan as it is.** It favours calibration and skims Lecture 6.\n- **Skim Lecture 5 on Thursday instead, if Lecture 6 matters more in your course.** That gives Lecture 6 the full Friday plus about 40 minutes moved from Thursday.\n- **Add 1–2 hours on Sunday.** Then Lecture 6 can get its full first pass, and Sunday becomes the repeats-only day.\n\n## How to use it\n- Tick off each day's row when it's done. If a day slips, use the next spare slot first, then cut from the end of Lecture 6.\n- On each day, ask me for cards or a quiz on that day's sections. **For those I need the text of the notes**, pasted in or shared as a file. I only have the table of contents now, and I won't write questions from memory of a textbook.\n\nThis plan covers all the material in the time you have. It can't tell you what grade you'll get."
+              },
+              {
+                "name": "fit",
+                "passed": true,
+                "weight": 2,
+                "explanation": "judge votes: PASS PASS PASS",
+                "withOnly": false,
+                "scored": true,
+                "judgeVotes": [
+                  true,
+                  true,
+                  true
+                ],
+                "evidence": "# Revision plan: mobile robotics, exam Monday 19 Oct 2026\n\n**You have 6 study days and 14 hours (Mon–Fri 2h each, Sat 4h, Sun 0). The full plan needs about 17 hours, so it is about 3 hours short.** The table below fits into 14 hours. \"What does not fit\" explains what that costs.\n\nMy estimate is about 20 minutes per page for a first pass. I can't see the notes themselves, so this is a guess. 27 pages make about 9h of first passes. Two repeats per section add about 6h, and spare time for slips adds about 2h.\n\n(My system clock says 6 Oct, but I've used your date. Mon 12 Oct 2026 is a Monday, so the weekdays below match.)\n\n## Order and why\n1. **4.4 Sources of error, then 4.5 Calibration, on day 1.** Calibration is your weak spot, so it goes first and comes back most often. I'm guessing that calibration builds on 4.4, since the table of contents puts them next to each other. I can't confirm that without seeing the pages.\n2. **4.1 to 4.3**, in the order the notes use.\n3. **Lecture 5, then Lecture 6**, in the order the notes use.\n4. **Saturday is repeats only.** Sunday is off, so Saturday is your last study day before the exam.\n\n## The table\n\n| date | hours | first pass | repeats | how |\n|---|---|---|---|---|\n| Mon 12 Oct | 2h | 4.4 Sources of error (40m), 4.5 Calibration (1h20) | none | Read actively. Write each calibration step out by hand. |\n| Tue 13 Oct | 2h | 4.1 Differential drive (40m), 4.2 Pose update (1h) | 4.5 quick check (20m) | Cards on 4.5. Derive the pose update by hand. |\n| Wed 14 Oct | 2h | 4.3 Error growth (40m) | 4.4 (15m), 4.5 (45m) | Quiz on 4.4 and 4.5. Redo the calibration procedure from a blank page. **20m spare.** |\n| Thu 15 Oct | 2h | Lecture 5 Range sensors (2h) | none | Read actively and note key terms for cards. |\n| Fri 16 Oct | 2h | Lecture 6 Probabilistic localisation, **skimmed** (2h instead of about 2h40) | none | Get the main ideas and the update steps, and mark what you skipped. |\n| Sat 17 Oct | 4h | **nothing new** | 4.5 (45m), 4.1 to 4.3 (40m), 4.4 (10m), L5 (40m), L6 (55m) | Mixed quiz across all sections. Calibration by hand one more time. **30m spare.** |\n| Sun 18 Oct | 0h | none | none | Rest |\n| **Mon 19 Oct** | | **Exam** | | |\n\n## What does not fit\n- **Lecture 6 gets a skim, not a full pass.** It's your biggest section at 8 pages, and the skim saves about 40 minutes.\n- **Most sections get one repeat, not two.** Only 4.4 and 4.5 get two or more. 4.1 to 4.3 and the two lectures get just Saturday's repeat. Lectures 5 and 6 come back after 1–2 days, not the usual 2.\n- **There is less spare time than usual**: 50 minutes in total instead of about 2 hours.\n\n**Your choices:**\n- **Keep the plan as it is.** It favours calibration and skims Lecture 6.\n- **Skim Lecture 5 on Thursday instead, if Lecture 6 matters more in your course.** That gives Lecture 6 the full Friday plus about 40 minutes moved from Thursday.\n- **Add 1–2 hours on Sunday.** Then Lecture 6 can get its full first pass, and Sunday becomes the repeats-only day.\n\n## How to use it\n- Tick off each day's row when it's done. If a day slips, use the next spare slot first, then cut from the end of Lecture 6.\n- On each day, ask me for cards or a quiz on that day's sections. **For those I need the text of the notes**, pasted in or shared as a file. I only have the table of contents now, and I won't write questions from memory of a textbook.\n\nThis plan covers all the material in the time you have. It can't tell you what grade you'll get."
+              },
+              {
+                "name": "no-promise",
+                "passed": true,
+                "weight": 1,
+                "explanation": "judge votes: PASS PASS PASS",
+                "withOnly": false,
+                "scored": true,
+                "judgeVotes": [
+                  true,
+                  true,
+                  true
+                ],
+                "evidence": "# Revision plan: mobile robotics, exam Monday 19 Oct 2026\n\n**You have 6 study days and 14 hours (Mon–Fri 2h each, Sat 4h, Sun 0). The full plan needs about 17 hours, so it is about 3 hours short.** The table below fits into 14 hours. \"What does not fit\" explains what that costs.\n\nMy estimate is about 20 minutes per page for a first pass. I can't see the notes themselves, so this is a guess. 27 pages make about 9h of first passes. Two repeats per section add about 6h, and spare time for slips adds about 2h.\n\n(My system clock says 6 Oct, but I've used your date. Mon 12 Oct 2026 is a Monday, so the weekdays below match.)\n\n## Order and why\n1. **4.4 Sources of error, then 4.5 Calibration, on day 1.** Calibration is your weak spot, so it goes first and comes back most often. I'm guessing that calibration builds on 4.4, since the table of contents puts them next to each other. I can't confirm that without seeing the pages.\n2. **4.1 to 4.3**, in the order the notes use.\n3. **Lecture 5, then Lecture 6**, in the order the notes use.\n4. **Saturday is repeats only.** Sunday is off, so Saturday is your last study day before the exam.\n\n## The table\n\n| date | hours | first pass | repeats | how |\n|---|---|---|---|---|\n| Mon 12 Oct | 2h | 4.4 Sources of error (40m), 4.5 Calibration (1h20) | none | Read actively. Write each calibration step out by hand. |\n| Tue 13 Oct | 2h | 4.1 Differential drive (40m), 4.2 Pose update (1h) | 4.5 quick check (20m) | Cards on 4.5. Derive the pose update by hand. |\n| Wed 14 Oct | 2h | 4.3 Error growth (40m) | 4.4 (15m), 4.5 (45m) | Quiz on 4.4 and 4.5. Redo the calibration procedure from a blank page. **20m spare.** |\n| Thu 15 Oct | 2h | Lecture 5 Range sensors (2h) | none | Read actively and note key terms for cards. |\n| Fri 16 Oct | 2h | Lecture 6 Probabilistic localisation, **skimmed** (2h instead of about 2h40) | none | Get the main ideas and the update steps, and mark what you skipped. |\n| Sat 17 Oct | 4h | **nothing new** | 4.5 (45m), 4.1 to 4.3 (40m), 4.4 (10m), L5 (40m), L6 (55m) | Mixed quiz across all sections. Calibration by hand one more time. **30m spare.** |\n| Sun 18 Oct | 0h | none | none | Rest |\n| **Mon 19 Oct** | | **Exam** | | |\n\n## What does not fit\n- **Lecture 6 gets a skim, not a full pass.** It's your biggest section at 8 pages, and the skim saves about 40 minutes.\n- **Most sections get one repeat, not two.** Only 4.4 and 4.5 get two or more. 4.1 to 4.3 and the two lectures get just Saturday's repeat. Lectures 5 and 6 come back after 1–2 days, not the usual 2.\n- **There is less spare time than usual**: 50 minutes in total instead of about 2 hours.\n\n**Your choices:**\n- **Keep the plan as it is.** It favours calibration and skims Lecture 6.\n- **Skim Lecture 5 on Thursday instead, if Lecture 6 matters more in your course.** That gives Lecture 6 the full Friday plus about 40 minutes moved from Thursday.\n- **Add 1–2 hours on Sunday.** Then Lecture 6 can get its full first pass, and Sunday becomes the repeats-only day.\n\n## How to use it\n- Tick off each day's row when it's done. If a day slips, use the next spare slot first, then cut from the end of Lecture 6.\n- On each day, ask me for cards or a quiz on that day's sections. **For those I need the text of the notes**, pasted in or shared as a file. I only have the table of contents now, and I won't write questions from memory of a textbook.\n\nThis plan covers all the material in the time you have. It can't tell you what grade you'll get."
+              }
+            ]
+          }
+        ]
+      },
+      "aggregates": {
+        "score": 0.8666666666666667,
+        "passRate": 0.6666666666666666
+      }
+    }
+  ],
+  "aggregates": {
+    "casesTotal": 1,
+    "casesPassed": 0,
+    "overallScore": 0.8666666666666667,
+    "overallPassRate": 0.6666666666666666
+  }
+}

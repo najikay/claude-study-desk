@@ -1,0 +1,624 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Eval report — study-desk v0.1.0</title>
+</head>
+<body>
+<style>
+:root{--plane:#f9f9f7;--surface:#fcfcfb;--ink:#0b0b0b;--ink-2:#52514e;--ink-3:#6b6a64;--hairline:rgba(11,11,11,.10);--grid:#e1e0d9;--inset:rgba(11,11,11,.04);--accent:#2a78d6;--base-fill:#6b6a64;--delta-good:#006300;--good:#067d06;--warning:#8a6100;--critical:#d03b3b;
+  color-scheme:light dark;
+}
+@media (prefers-color-scheme:dark){:root{--plane:#0d0d0d;--surface:#1a1a19;--ink:#ffffff;--ink-2:#c3c2b7;--ink-3:#898781;--hairline:rgba(255,255,255,.10);--grid:#2c2c2a;--inset:rgba(255,255,255,.05);--accent:#3987e5;--base-fill:#898781;--delta-good:#0ca30c;--good:#0ca30c;--warning:#fab219;--critical:#e06c6c;color-scheme:dark}}
+:root[data-theme="dark"]{--plane:#0d0d0d;--surface:#1a1a19;--ink:#ffffff;--ink-2:#c3c2b7;--ink-3:#898781;--hairline:rgba(255,255,255,.10);--grid:#2c2c2a;--inset:rgba(255,255,255,.05);--accent:#3987e5;--base-fill:#898781;--delta-good:#0ca30c;--good:#0ca30c;--warning:#fab219;--critical:#e06c6c;color-scheme:dark}
+:root[data-theme="light"]{--plane:#f9f9f7;--surface:#fcfcfb;--ink:#0b0b0b;--ink-2:#52514e;--ink-3:#6b6a64;--hairline:rgba(11,11,11,.10);--grid:#e1e0d9;--inset:rgba(11,11,11,.04);--accent:#2a78d6;--base-fill:#6b6a64;--delta-good:#006300;--good:#067d06;--warning:#8a6100;--critical:#d03b3b;color-scheme:light}
+*{box-sizing:border-box}
+body{margin:0;background:var(--plane);color:var(--ink);
+  font:14px/1.55 system-ui,-apple-system,"Segoe UI",sans-serif;
+  -webkit-text-size-adjust:100%}
+.wrap{max-width:880px;margin:0 auto;padding:40px 24px 64px;display:flex;flex-direction:column;gap:20px}
+.eyebrow{font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-3)}
+header h1{margin:2px 0 0;font-size:24px;font-weight:600;line-height:1.25;text-wrap:balance}
+.meta{display:flex;flex-wrap:wrap;gap:6px 14px;margin-top:8px;color:var(--ink-2);font-size:13px}
+.meta .num{font-variant-numeric:tabular-nums lining-nums}
+.banner{display:flex;align-items:center;gap:8px;padding:10px 14px;border-radius:8px;
+  border:1px solid var(--hairline);background:var(--surface);font-size:13px}
+.banner .chip-warn{color:var(--warning);font-weight:600}
+.tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px}
+.tile{background:var(--surface);border:1px solid var(--hairline);border-radius:10px;padding:14px 16px;
+  display:flex;flex-direction:column;gap:4px}
+.tile .label{font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-3)}
+.tile .value{font-size:26px;font-weight:600;font-variant-numeric:tabular-nums lining-nums;line-height:1.1}
+.tile.hero .value{font-family:Georgia,"Times New Roman",serif;font-weight:400;font-size:48px}
+.tile .sub{font-size:12px;color:var(--ink-2);font-variant-numeric:tabular-nums}
+.tile .value.delta-pos{color:var(--delta-good)}
+.tile .value.delta-neg{color:var(--critical)}
+.toolbar{display:flex;gap:8px;justify-content:flex-end}
+.toolbar button{font:12px system-ui,-apple-system,"Segoe UI",sans-serif;color:var(--ink-2);
+  background:var(--surface);border:1px solid var(--hairline);border-radius:6px;padding:4px 10px;cursor:pointer}
+.toolbar button:hover{color:var(--ink)}
+.toolbar button:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
+.case{background:var(--surface);border:1px solid var(--hairline);border-radius:10px;padding:18px 20px;
+  display:flex;flex-direction:column;gap:10px}
+.case-regressed{border-left:3px solid var(--critical)}
+.verdict{margin:6px 0 0;font-size:15px}
+.verdict .delta{font-size:15px}
+.flag{font-size:11px;font-weight:600;color:var(--warning);white-space:nowrap}
+.star{color:var(--warning);font-size:.45em;vertical-align:super;line-height:0;cursor:help}
+.legend summary{cursor:pointer;font-size:12px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;color:var(--ink-2)}
+.legend-list{margin:8px 0 0;padding-left:20px;display:flex;flex-direction:column;gap:5px;font-size:13px;color:var(--ink-2)}
+.case-head{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap}
+.case-head h2{margin:0;font-size:16px;font-weight:600}
+.case-head .spacer{flex:1}
+.case-score{font-size:15px;font-weight:600}
+.mono{font:12px "SF Mono",ui-monospace,Menlo,Consolas,monospace}
+.num{font-variant-numeric:tabular-nums lining-nums}
+.muted{color:var(--ink-3);font-size:12px}
+.meter{display:inline-block;position:relative;width:120px;height:6px;border-radius:4px;background:var(--grid);
+  vertical-align:middle}
+.meter>span{display:block;height:100%;border-radius:4px;max-width:100%}
+.meter .tick{position:absolute;top:-2px;bottom:-2px;width:2px;background:var(--ink-3);border-radius:1px}
+.m-accent>span{background:var(--accent)}
+.m-base>span{background:var(--base-fill)}
+.delta{font-size:12px;font-weight:600;font-variant-numeric:tabular-nums}
+.delta-pos{color:var(--delta-good)}
+.delta-neg{color:var(--critical)}
+.delta-zero{color:var(--ink-3)}
+details.section{border-top:1px solid var(--grid);padding-top:10px}
+details.section>summary{cursor:pointer;font-size:12px;font-weight:600;letter-spacing:.04em;
+  text-transform:uppercase;color:var(--ink-2);list-style-position:outside;margin-left:2px}
+details.section>summary:hover{color:var(--ink)}
+details.section[open]>summary{margin-bottom:8px}
+.md{display:flex;flex-direction:column;gap:8px;background:var(--inset);border-radius:8px;
+  padding:12px 14px;overflow-wrap:break-word}
+.md>:first-child{margin-top:0}
+.md h1,.md h2,.md h3,.md h4,.md h5,.md h6{margin:4px 0 0;font-size:1em;font-weight:600;line-height:1.3}
+.md p,.md ul,.md ol,.md blockquote,.md table,.md pre,.md hr{margin:0}
+.md ul,.md ol{display:flex;flex-direction:column;gap:4px;padding-left:20px}
+.md blockquote{border-left:2px solid var(--hairline);padding-left:10px;color:var(--ink-2)}
+.md :not(pre)>code{background:var(--inset);padding:1px 4px;border-radius:4px;
+  font:.92em "SF Mono",ui-monospace,Menlo,Consolas,monospace}
+.md pre{background:var(--inset);border:1px solid var(--hairline);padding:10px 12px;border-radius:6px;
+  overflow-x:auto;font:12px/1.5 "SF Mono",ui-monospace,Menlo,Consolas,monospace}
+.md pre code{background:none;padding:0;font:inherit}
+.md table{width:100%;border-collapse:collapse}
+.md th,.md td{padding:5px 8px;text-align:left;vertical-align:top;border-bottom:1px solid var(--grid)}
+.md th{font-weight:600;color:var(--ink-2)}
+.md a{color:var(--accent);text-decoration:none}
+.md a:hover{text-decoration:underline}
+.grader-def{display:flex;flex-direction:column;gap:6px;padding:8px 0}
+.grader-def+.grader-def{border-top:1px solid var(--grid)}
+.grader-def-head{display:flex;align-items:baseline;gap:8px}
+.grader-name{font:13px "SF Mono",ui-monospace,Menlo,Consolas,monospace;font-weight:600}
+.badge{font-size:10px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;color:var(--ink-2);
+  border:1px solid var(--hairline);border-radius:999px;padding:1px 8px}
+.config{display:flex;flex-direction:column;gap:2px;background:var(--inset);border-radius:8px;padding:10px 14px}
+.config code{font:12px "SF Mono",ui-monospace,Menlo,Consolas,monospace;overflow-wrap:anywhere}
+.arm{display:flex;flex-direction:column;gap:8px;padding:6px 0}
+.arm+.arm{border-top:1px dashed var(--grid);margin-top:4px;padding-top:12px}
+.arm-head{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap}
+.arm-label{font-size:13px;font-weight:600}
+.run{border:1px solid var(--grid);border-radius:8px;padding:10px 12px;display:flex;flex-direction:column;gap:8px}
+.run-head{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap}
+.run-title{font-size:12px;font-weight:600;color:var(--ink-2)}
+.run-error .explanation{color:var(--ink-2)}
+.note{font-size:12px;color:var(--ink-2)}
+.graders{display:flex;flex-direction:column;gap:4px}
+details.grader{border-radius:6px}
+details.grader>summary{cursor:pointer;display:flex;align-items:baseline;gap:8px;padding:3px 4px;
+  border-radius:6px;list-style:none}
+details.grader>summary::-webkit-details-marker{display:none}
+details.grader>summary::before{content:'▸';font-size:10px;color:var(--ink-3);flex:none;
+  transition:transform .12s ease}
+details.grader[open]>summary::before{transform:rotate(90deg)}
+details.grader>summary:hover{background:var(--inset)}
+details.grader>summary:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
+.grader-body{padding:6px 8px 8px 24px;display:flex;flex-direction:column;gap:6px}
+.chip{font-size:11px;font-weight:600;border-radius:999px;padding:1px 8px;white-space:nowrap}
+.chip-pass{color:var(--good);border:1px solid currentColor}
+.chip-fail{color:var(--critical);border:1px solid currentColor}
+.chip.chip-warn{color:var(--warning);border:1px solid currentColor}
+.explanation{margin:0;font-size:13px;color:var(--ink-2);white-space:pre-wrap;overflow-wrap:break-word}
+.kv{display:flex;gap:8px;font-size:12px;color:var(--ink-3)}
+.votes{font-variant-numeric:tabular-nums;letter-spacing:.1em}
+pre.evidence{margin:0;background:var(--inset);border:1px solid var(--hairline);border-radius:6px;
+  padding:8px 10px;overflow-x:auto;max-height:320px;
+  font:12px/1.5 "SF Mono",ui-monospace,Menlo,Consolas,monospace;white-space:pre-wrap;overflow-wrap:break-word}
+footer{color:var(--ink-3);font-size:12px;text-align:center;padding-top:8px}
+@media (prefers-reduced-motion:no-preference){
+  details.grader>summary,.toolbar button{transition:background .12s ease,color .12s ease}
+}
+@media (prefers-reduced-motion:reduce){
+  details.grader>summary::before{transition:none}
+}
+@media print{
+  :root,:root[data-theme="dark"],:root[data-theme="light"]{--plane:#f9f9f7;--surface:#fcfcfb;--ink:#0b0b0b;--ink-2:#52514e;--ink-3:#6b6a64;--hairline:rgba(11,11,11,.10);--grid:#e1e0d9;--inset:rgba(11,11,11,.04);--accent:#2a78d6;--base-fill:#6b6a64;--delta-good:#006300;--good:#067d06;--warning:#8a6100;--critical:#d03b3b;color-scheme:light}
+  body{background:#fff}
+  .toolbar{display:none}
+  .case,.run,.grader-def{break-inside:avoid}
+  pre.evidence{max-height:none}
+}
+</style>
+<div class="wrap">
+<header>
+<div class="eyebrow">Plugin eval report</div>
+<h1>study-desk v0.1.0</h1>
+
+<div class="meta">
+<span class="mono">.</span>
+<span>Claude Code v2.1.291</span>
+<span class="num">2026-10-06 10:25 UTC</span>
+<span class="num">3m 22s</span>
+<span class="num">$0.60</span>
+<span class="num">3 runs</span>
+
+
+
+<span>judge sonnet</span>
+<span class="num">threshold 100%</span>
+<span>filtered: --case study-plan</span>
+</div>
+</header>
+
+<section class="tiles">
+<div class="tile hero"><span class="label">Suite score</span><span class="value">86.7%</span><span class="sub">mean of per-case scores</span></div>
+
+<div class="tile"><span class="label">Cases</span><span class="value num">1</span><span class="sub">0 of 1 ≥ 100% threshold</span></div>
+<div class="tile"><span class="label">Perfect runs</span><span class="value num">66.7%</span><span class="sub">runs where every grader passed</span></div>
+</section>
+<details class="section legend">
+<summary>How to read this report</summary>
+<ul class="legend-list">
+<li>A run's score is the weighted fraction of its graders that passed; a "perfect" run passed every grader.</li>
+<li>A case's score is the mean of its runs; a case passes when its score is at or above the 100% threshold (the tick on each case bar).</li>
+<li>The suite score is the mean of the per-case scores.</li>
+<li>Judge votes are independent samples of the LLM judge; the majority decides pass or fail.</li>
+<li><strong>No baseline arm was run</strong> (ablation off) — this report shows absolute scores only and cannot say whether the plugin caused them. Re-run with <code>--ablation with-without</code> to measure the plugin’s effect.</li>
+
+</ul>
+</details>
+<div class="toolbar"><button type="button" data-act="expand">Expand all</button><button type="button" data-act="collapse">Collapse all</button></div>
+<article class="case" id="case-1">
+<div class="case-head">
+<h2>study-plan</h2>
+<span class="muted mono">evals/study-plan</span>
+<span class="spacer"></span>
+
+
+
+<span class="meter m-accent" aria-hidden="true"><span style="width:86.7%"></span><i class="tick" style="left:100.0%"></i></span>
+<span class="num case-score">86.7%</span>
+</div>
+
+<details class="section" open>
+<summary>Results</summary>
+<section class="arm">
+<div class="arm-head">
+<span class="arm-label">Runs</span>
+<span class="meter m-accent" aria-hidden="true"><span style="width:86.7%"></span></span>
+<span class="num">86.7%</span>
+<span class="muted num">66.7% of runs perfect</span>
+</div>
+<div class="run">
+<div class="run-head">
+<span class="run-title">Run 1</span>
+<span class="meter m-accent" aria-hidden="true"><span style="width:100.0%"></span></span>
+<span class="num">100%</span>
+<span class="muted num">3 turns · $0.18 · 10:25:36 UTC</span>
+</div>
+
+<div class="graders"><details class="grader">
+<summary><span class="chip chip-pass">✓ pass</span> <span class="grader-name">dates</span> <span class="muted">×2</span> </summary>
+<div class="grader-body">
+<p class="explanation">judge votes: PASS PASS PASS</p>
+<div class="kv"><span>Judge votes</span><span class="votes">✓ ✓ ✓</span></div><div class="kv"><span>Evidence (what the judge was shown; for an image, a description of what was sent)</span></div><pre class="evidence">**7 days until the exam (Mon 12 → Mon 19), 14 h available, and the plan needs about 12¼ h. That leaves about 1¾ h spare for things that slip.**
+
+**How I sized it:** your notes come to 27 pages. I&apos;ve assumed a first read takes about 15 minutes per page and a repeat takes about a third of that. That rate is my guess, so check it on Monday: if 4.1 takes you much longer than 30 minutes, see &quot;What does not fit&quot; below.
+
+**Order:** I&apos;ve put calibration (4.5) on day one and come back to it five times. I&apos;m also covering 4.1 (differential drive) and 4.4 (sources of error) just before it. That&apos;s my reading, not something your notes say: calibration probably corrects the errors listed in 4.4 using the drive model from 4.1. The rest follows your notes&apos; order. Sunday is your day off, so **Saturday is the last study day and has repeats only, nothing new.**
+
+| date | hours | first pass | repeats | how |
+|---|---|---|---|---|
+| Mon 12 Oct | 2 | 4.1 Differential drive (0.5 h), 4.4 Sources of error (0.5 h), 4.5 Calibration part 1 (1 h) | none | Work every 4.5 derivation by hand |
+| Tue 13 Oct | 2 | 4.5 Calibration part 2 (0.5 h), 4.2 Pose update (0.75 h), 4.3 Error growth (0.5 h) | none | Do the pose-update equations by hand. 0.25 h spare |
+| Wed 14 Oct | 2 | Lecture 5 Range sensors (1.5 h) | 4.1 + 4.4 (0.25 h), **4.5** (0.25 h) | Cards for 4.1 and 4.4, short quiz on 4.5 |
+| Thu 15 Oct | 2 | Lecture 6 Probabilistic localisation part 1 (1.5 h) | 4.2 + 4.3 (0.5 h) | Cards, plus re-derive the pose update without notes |
+| Fri 16 Oct | 2 | Lecture 6 part 2 (0.5 h) | **4.5** (0.5 h), Lecture 5 (0.5 h) | Quiz. **0.5 h spare** |
+| Sat 17 Oct | 4 | none | **4.5** (0.75 h), 4.1–4.4 (0.75 h), Lecture 5 (0.5 h), Lecture 6 (1 h) | Quiz or mock paper across all sections. **1 h spare** |
+| Sun 18 Oct | 0 | none | none | Day off |
+| Mon 19 Oct | | **Exam** | | |
+
+Normally each section gets a repeat about two days after the first pass and another about a week later. You only have a week, so the gaps are shorter. Lecture 6 only gets one repeat because it comes last.
+
+**What does not fit:** everything fits at 15 minutes per page. If pages take you nearer 25 minutes, you&apos;ll need about 4 h more than you have. In that case, use the spare slots first. If that&apos;s still not enough, skim Lecture 6 instead of working through it, and keep the 4.5 time as it is.
+
+**How to use it:** tick off each row when you finish it. On each day, ask me for cards (study-cards) or a quiz (study-quiz) on that day&apos;s repeats. I only have your table of contents, not the notes themselves, so paste the relevant pages each time. The cards and questions will come from what you paste, not from my own knowledge of the subject. The plan makes sure you cover all the material, but it can&apos;t predict your result.
+
+One thing to check: you said today is Monday 12 October, but my system clock says 6 October. I&apos;ve used your date. If it&apos;s actually the 6th, you have another week, so tell me and I&apos;ll spread the plan out.</pre>
+</div>
+</details>
+<details class="grader">
+<summary><span class="chip chip-pass">✓ pass</span> <span class="grader-name">fit</span> <span class="muted">×2</span> </summary>
+<div class="grader-body">
+<p class="explanation">judge votes: PASS PASS PASS</p>
+<div class="kv"><span>Judge votes</span><span class="votes">✓ ✓ ✓</span></div><div class="kv"><span>Evidence (what the judge was shown; for an image, a description of what was sent)</span></div><pre class="evidence">**7 days until the exam (Mon 12 → Mon 19), 14 h available, and the plan needs about 12¼ h. That leaves about 1¾ h spare for things that slip.**
+
+**How I sized it:** your notes come to 27 pages. I&apos;ve assumed a first read takes about 15 minutes per page and a repeat takes about a third of that. That rate is my guess, so check it on Monday: if 4.1 takes you much longer than 30 minutes, see &quot;What does not fit&quot; below.
+
+**Order:** I&apos;ve put calibration (4.5) on day one and come back to it five times. I&apos;m also covering 4.1 (differential drive) and 4.4 (sources of error) just before it. That&apos;s my reading, not something your notes say: calibration probably corrects the errors listed in 4.4 using the drive model from 4.1. The rest follows your notes&apos; order. Sunday is your day off, so **Saturday is the last study day and has repeats only, nothing new.**
+
+| date | hours | first pass | repeats | how |
+|---|---|---|---|---|
+| Mon 12 Oct | 2 | 4.1 Differential drive (0.5 h), 4.4 Sources of error (0.5 h), 4.5 Calibration part 1 (1 h) | none | Work every 4.5 derivation by hand |
+| Tue 13 Oct | 2 | 4.5 Calibration part 2 (0.5 h), 4.2 Pose update (0.75 h), 4.3 Error growth (0.5 h) | none | Do the pose-update equations by hand. 0.25 h spare |
+| Wed 14 Oct | 2 | Lecture 5 Range sensors (1.5 h) | 4.1 + 4.4 (0.25 h), **4.5** (0.25 h) | Cards for 4.1 and 4.4, short quiz on 4.5 |
+| Thu 15 Oct | 2 | Lecture 6 Probabilistic localisation part 1 (1.5 h) | 4.2 + 4.3 (0.5 h) | Cards, plus re-derive the pose update without notes |
+| Fri 16 Oct | 2 | Lecture 6 part 2 (0.5 h) | **4.5** (0.5 h), Lecture 5 (0.5 h) | Quiz. **0.5 h spare** |
+| Sat 17 Oct | 4 | none | **4.5** (0.75 h), 4.1–4.4 (0.75 h), Lecture 5 (0.5 h), Lecture 6 (1 h) | Quiz or mock paper across all sections. **1 h spare** |
+| Sun 18 Oct | 0 | none | none | Day off |
+| Mon 19 Oct | | **Exam** | | |
+
+Normally each section gets a repeat about two days after the first pass and another about a week later. You only have a week, so the gaps are shorter. Lecture 6 only gets one repeat because it comes last.
+
+**What does not fit:** everything fits at 15 minutes per page. If pages take you nearer 25 minutes, you&apos;ll need about 4 h more than you have. In that case, use the spare slots first. If that&apos;s still not enough, skim Lecture 6 instead of working through it, and keep the 4.5 time as it is.
+
+**How to use it:** tick off each row when you finish it. On each day, ask me for cards (study-cards) or a quiz (study-quiz) on that day&apos;s repeats. I only have your table of contents, not the notes themselves, so paste the relevant pages each time. The cards and questions will come from what you paste, not from my own knowledge of the subject. The plan makes sure you cover all the material, but it can&apos;t predict your result.
+
+One thing to check: you said today is Monday 12 October, but my system clock says 6 October. I&apos;ve used your date. If it&apos;s actually the 6th, you have another week, so tell me and I&apos;ll spread the plan out.</pre>
+</div>
+</details>
+<details class="grader">
+<summary><span class="chip chip-pass">✓ pass</span> <span class="grader-name">no-promise</span>  </summary>
+<div class="grader-body">
+<p class="explanation">judge votes: PASS PASS PASS</p>
+<div class="kv"><span>Judge votes</span><span class="votes">✓ ✓ ✓</span></div><div class="kv"><span>Evidence (what the judge was shown; for an image, a description of what was sent)</span></div><pre class="evidence">**7 days until the exam (Mon 12 → Mon 19), 14 h available, and the plan needs about 12¼ h. That leaves about 1¾ h spare for things that slip.**
+
+**How I sized it:** your notes come to 27 pages. I&apos;ve assumed a first read takes about 15 minutes per page and a repeat takes about a third of that. That rate is my guess, so check it on Monday: if 4.1 takes you much longer than 30 minutes, see &quot;What does not fit&quot; below.
+
+**Order:** I&apos;ve put calibration (4.5) on day one and come back to it five times. I&apos;m also covering 4.1 (differential drive) and 4.4 (sources of error) just before it. That&apos;s my reading, not something your notes say: calibration probably corrects the errors listed in 4.4 using the drive model from 4.1. The rest follows your notes&apos; order. Sunday is your day off, so **Saturday is the last study day and has repeats only, nothing new.**
+
+| date | hours | first pass | repeats | how |
+|---|---|---|---|---|
+| Mon 12 Oct | 2 | 4.1 Differential drive (0.5 h), 4.4 Sources of error (0.5 h), 4.5 Calibration part 1 (1 h) | none | Work every 4.5 derivation by hand |
+| Tue 13 Oct | 2 | 4.5 Calibration part 2 (0.5 h), 4.2 Pose update (0.75 h), 4.3 Error growth (0.5 h) | none | Do the pose-update equations by hand. 0.25 h spare |
+| Wed 14 Oct | 2 | Lecture 5 Range sensors (1.5 h) | 4.1 + 4.4 (0.25 h), **4.5** (0.25 h) | Cards for 4.1 and 4.4, short quiz on 4.5 |
+| Thu 15 Oct | 2 | Lecture 6 Probabilistic localisation part 1 (1.5 h) | 4.2 + 4.3 (0.5 h) | Cards, plus re-derive the pose update without notes |
+| Fri 16 Oct | 2 | Lecture 6 part 2 (0.5 h) | **4.5** (0.5 h), Lecture 5 (0.5 h) | Quiz. **0.5 h spare** |
+| Sat 17 Oct | 4 | none | **4.5** (0.75 h), 4.1–4.4 (0.75 h), Lecture 5 (0.5 h), Lecture 6 (1 h) | Quiz or mock paper across all sections. **1 h spare** |
+| Sun 18 Oct | 0 | none | none | Day off |
+| Mon 19 Oct | | **Exam** | | |
+
+Normally each section gets a repeat about two days after the first pass and another about a week later. You only have a week, so the gaps are shorter. Lecture 6 only gets one repeat because it comes last.
+
+**What does not fit:** everything fits at 15 minutes per page. If pages take you nearer 25 minutes, you&apos;ll need about 4 h more than you have. In that case, use the spare slots first. If that&apos;s still not enough, skim Lecture 6 instead of working through it, and keep the 4.5 time as it is.
+
+**How to use it:** tick off each row when you finish it. On each day, ask me for cards (study-cards) or a quiz (study-quiz) on that day&apos;s repeats. I only have your table of contents, not the notes themselves, so paste the relevant pages each time. The cards and questions will come from what you paste, not from my own knowledge of the subject. The plan makes sure you cover all the material, but it can&apos;t predict your result.
+
+One thing to check: you said today is Monday 12 October, but my system clock says 6 October. I&apos;ve used your date. If it&apos;s actually the 6th, you have another week, so tell me and I&apos;ll spread the plan out.</pre>
+</div>
+</details></div>
+</div>
+<div class="run">
+<div class="run-head">
+<span class="run-title">Run 2</span>
+<span class="meter m-accent" aria-hidden="true"><span style="width:60.0%"></span></span>
+<span class="num">60%</span>
+<span class="muted num">3 turns · $0.23 · 10:26:29 UTC</span>
+</div>
+
+<div class="graders"><details class="grader" open>
+<summary><span class="chip chip-fail">✗ fail</span> <span class="grader-name">dates</span> <span class="muted">×2</span> </summary>
+<div class="grader-body">
+<p class="explanation">judge votes: FAIL FAIL FAIL</p>
+<div class="kv"><span>Judge votes</span><span class="votes">✗ ✗ ✗</span></div><div class="kv"><span>Evidence (what the judge was shown; for an image, a description of what was sent)</span></div><pre class="evidence">**7 days until the exam (Mon 12 – Sun 18). You have 14 h. Covering everything at full pace with repeats and some spare time would take about 15 h, so one thing has to give (see &quot;What doesn&apos;t fit&quot;).**
+
+I&apos;ve assumed you read about **3 pages an hour** (20 min per page), since these are technical notes with equations. If you&apos;re faster or slower, tell me and I&apos;ll redo the plan.
+
+**Order and why:**
+- **Weak spot first.** Calibration (4.5) starts on day 1 so it can be repeated on Wed and Sat. I&apos;ve put it with 4.4 Sources of error. Going only by the titles, my guess is that calibration corrects those errors, so they belong together.
+- **Then the rest in the notes&apos; order.** 4.1 → 4.2 → 4.3, then Lecture 5, then Lecture 6.
+- **Saturday has nothing new.** It&apos;s your last study day, because Sunday is off. It&apos;s for repeats only.
+
+| Date | Hours | First pass | Repeats | How |
+|---|---|---|---|---|
+| Mon 12 Oct | 2 h | 4.4 Sources of error (40 min), **4.5 Calibration** (80 min) | – | Read, then redo 4.5&apos;s worked steps by hand without the notes |
+| Tue 13 Oct | 2 h | 4.1 Differential drive (40 min), 4.2 Pose update (60 min) | – | Derive the pose-update equations by hand. **20 min free** for anything that slipped |
+| Wed 14 Oct | 2 h | 4.3 Error growth (40 min) | **4.5** (30 min), 4.4 (15 min), 4.1 + 4.2 (35 min) | Cards for 4.1, 4.2, 4.4 and 4.5. Quiz on 4.5 |
+| Thu 15 Oct | 2 h | Lecture 5 Range sensors (all 6 pages) | – | Read, then make cards for the key terms |
+| Fri 16 Oct | 2 h | Lecture 6 Probabilistic localisation, **skimmed** (8 pages in 2 h) | – | Read the main ideas fully and skim the detail. Make cards as you go |
+| Sat 17 Oct | 4 h | — nothing new — | **4.5** (30 min), 4.1–4.4 (65 min), Lecture 5 (40 min), Lecture 6 (55 min) | Mixed quiz across all sections, weighted toward 4.5. **50 min free**: a past paper if you have one, or more calibration questions |
+| Sun 18 Oct | 0 h | – | – | Rest |
+| **Mon 19 Oct** | | **Exam** | | |
+
+**What doesn&apos;t fit:** At 3 pages an hour, Lecture 6 needs about 2 h 40 min, but Friday only has 2 h. As written, the plan skims it. Your other options:
+- **Start Lecture 5 earlier.** Skip Wednesday&apos;s repeat of 4.1 + 4.2 and use those 35 min to begin Lecture 5. That frees time for a full read of Lecture 6, but 4.1 and 4.2 then get only one repeat (Saturday).
+- **Find about 40 extra minutes** before Friday, for example a short session on Sunday the 11th or an extra slot one evening.
+
+Lectures 5 and 6 come last, so either way they only get one repeat (Saturday). The schedule doesn&apos;t leave room for more.
+
+**How to use it:** Tick off each day&apos;s row when it&apos;s done. If something slips, use Tuesday&apos;s free 20 minutes first, then Saturday&apos;s 50. For the repeat days, paste the text of those sections here and ask me for cards or a quiz on them. So far I only have the table of contents, so I can&apos;t write questions until I see the notes themselves.
+
+This plan makes sure you cover all the material before the exam. It can&apos;t predict your result.</pre>
+</div>
+</details>
+<details class="grader">
+<summary><span class="chip chip-pass">✓ pass</span> <span class="grader-name">fit</span> <span class="muted">×2</span> </summary>
+<div class="grader-body">
+<p class="explanation">judge votes: PASS PASS PASS</p>
+<div class="kv"><span>Judge votes</span><span class="votes">✓ ✓ ✓</span></div><div class="kv"><span>Evidence (what the judge was shown; for an image, a description of what was sent)</span></div><pre class="evidence">**7 days until the exam (Mon 12 – Sun 18). You have 14 h. Covering everything at full pace with repeats and some spare time would take about 15 h, so one thing has to give (see &quot;What doesn&apos;t fit&quot;).**
+
+I&apos;ve assumed you read about **3 pages an hour** (20 min per page), since these are technical notes with equations. If you&apos;re faster or slower, tell me and I&apos;ll redo the plan.
+
+**Order and why:**
+- **Weak spot first.** Calibration (4.5) starts on day 1 so it can be repeated on Wed and Sat. I&apos;ve put it with 4.4 Sources of error. Going only by the titles, my guess is that calibration corrects those errors, so they belong together.
+- **Then the rest in the notes&apos; order.** 4.1 → 4.2 → 4.3, then Lecture 5, then Lecture 6.
+- **Saturday has nothing new.** It&apos;s your last study day, because Sunday is off. It&apos;s for repeats only.
+
+| Date | Hours | First pass | Repeats | How |
+|---|---|---|---|---|
+| Mon 12 Oct | 2 h | 4.4 Sources of error (40 min), **4.5 Calibration** (80 min) | – | Read, then redo 4.5&apos;s worked steps by hand without the notes |
+| Tue 13 Oct | 2 h | 4.1 Differential drive (40 min), 4.2 Pose update (60 min) | – | Derive the pose-update equations by hand. **20 min free** for anything that slipped |
+| Wed 14 Oct | 2 h | 4.3 Error growth (40 min) | **4.5** (30 min), 4.4 (15 min), 4.1 + 4.2 (35 min) | Cards for 4.1, 4.2, 4.4 and 4.5. Quiz on 4.5 |
+| Thu 15 Oct | 2 h | Lecture 5 Range sensors (all 6 pages) | – | Read, then make cards for the key terms |
+| Fri 16 Oct | 2 h | Lecture 6 Probabilistic localisation, **skimmed** (8 pages in 2 h) | – | Read the main ideas fully and skim the detail. Make cards as you go |
+| Sat 17 Oct | 4 h | — nothing new — | **4.5** (30 min), 4.1–4.4 (65 min), Lecture 5 (40 min), Lecture 6 (55 min) | Mixed quiz across all sections, weighted toward 4.5. **50 min free**: a past paper if you have one, or more calibration questions |
+| Sun 18 Oct | 0 h | – | – | Rest |
+| **Mon 19 Oct** | | **Exam** | | |
+
+**What doesn&apos;t fit:** At 3 pages an hour, Lecture 6 needs about 2 h 40 min, but Friday only has 2 h. As written, the plan skims it. Your other options:
+- **Start Lecture 5 earlier.** Skip Wednesday&apos;s repeat of 4.1 + 4.2 and use those 35 min to begin Lecture 5. That frees time for a full read of Lecture 6, but 4.1 and 4.2 then get only one repeat (Saturday).
+- **Find about 40 extra minutes** before Friday, for example a short session on Sunday the 11th or an extra slot one evening.
+
+Lectures 5 and 6 come last, so either way they only get one repeat (Saturday). The schedule doesn&apos;t leave room for more.
+
+**How to use it:** Tick off each day&apos;s row when it&apos;s done. If something slips, use Tuesday&apos;s free 20 minutes first, then Saturday&apos;s 50. For the repeat days, paste the text of those sections here and ask me for cards or a quiz on them. So far I only have the table of contents, so I can&apos;t write questions until I see the notes themselves.
+
+This plan makes sure you cover all the material before the exam. It can&apos;t predict your result.</pre>
+</div>
+</details>
+<details class="grader">
+<summary><span class="chip chip-pass">✓ pass</span> <span class="grader-name">no-promise</span>  </summary>
+<div class="grader-body">
+<p class="explanation">judge votes: PASS PASS PASS</p>
+<div class="kv"><span>Judge votes</span><span class="votes">✓ ✓ ✓</span></div><div class="kv"><span>Evidence (what the judge was shown; for an image, a description of what was sent)</span></div><pre class="evidence">**7 days until the exam (Mon 12 – Sun 18). You have 14 h. Covering everything at full pace with repeats and some spare time would take about 15 h, so one thing has to give (see &quot;What doesn&apos;t fit&quot;).**
+
+I&apos;ve assumed you read about **3 pages an hour** (20 min per page), since these are technical notes with equations. If you&apos;re faster or slower, tell me and I&apos;ll redo the plan.
+
+**Order and why:**
+- **Weak spot first.** Calibration (4.5) starts on day 1 so it can be repeated on Wed and Sat. I&apos;ve put it with 4.4 Sources of error. Going only by the titles, my guess is that calibration corrects those errors, so they belong together.
+- **Then the rest in the notes&apos; order.** 4.1 → 4.2 → 4.3, then Lecture 5, then Lecture 6.
+- **Saturday has nothing new.** It&apos;s your last study day, because Sunday is off. It&apos;s for repeats only.
+
+| Date | Hours | First pass | Repeats | How |
+|---|---|---|---|---|
+| Mon 12 Oct | 2 h | 4.4 Sources of error (40 min), **4.5 Calibration** (80 min) | – | Read, then redo 4.5&apos;s worked steps by hand without the notes |
+| Tue 13 Oct | 2 h | 4.1 Differential drive (40 min), 4.2 Pose update (60 min) | – | Derive the pose-update equations by hand. **20 min free** for anything that slipped |
+| Wed 14 Oct | 2 h | 4.3 Error growth (40 min) | **4.5** (30 min), 4.4 (15 min), 4.1 + 4.2 (35 min) | Cards for 4.1, 4.2, 4.4 and 4.5. Quiz on 4.5 |
+| Thu 15 Oct | 2 h | Lecture 5 Range sensors (all 6 pages) | – | Read, then make cards for the key terms |
+| Fri 16 Oct | 2 h | Lecture 6 Probabilistic localisation, **skimmed** (8 pages in 2 h) | – | Read the main ideas fully and skim the detail. Make cards as you go |
+| Sat 17 Oct | 4 h | — nothing new — | **4.5** (30 min), 4.1–4.4 (65 min), Lecture 5 (40 min), Lecture 6 (55 min) | Mixed quiz across all sections, weighted toward 4.5. **50 min free**: a past paper if you have one, or more calibration questions |
+| Sun 18 Oct | 0 h | – | – | Rest |
+| **Mon 19 Oct** | | **Exam** | | |
+
+**What doesn&apos;t fit:** At 3 pages an hour, Lecture 6 needs about 2 h 40 min, but Friday only has 2 h. As written, the plan skims it. Your other options:
+- **Start Lecture 5 earlier.** Skip Wednesday&apos;s repeat of 4.1 + 4.2 and use those 35 min to begin Lecture 5. That frees time for a full read of Lecture 6, but 4.1 and 4.2 then get only one repeat (Saturday).
+- **Find about 40 extra minutes** before Friday, for example a short session on Sunday the 11th or an extra slot one evening.
+
+Lectures 5 and 6 come last, so either way they only get one repeat (Saturday). The schedule doesn&apos;t leave room for more.
+
+**How to use it:** Tick off each day&apos;s row when it&apos;s done. If something slips, use Tuesday&apos;s free 20 minutes first, then Saturday&apos;s 50. For the repeat days, paste the text of those sections here and ask me for cards or a quiz on them. So far I only have the table of contents, so I can&apos;t write questions until I see the notes themselves.
+
+This plan makes sure you cover all the material before the exam. It can&apos;t predict your result.</pre>
+</div>
+</details></div>
+</div>
+<div class="run">
+<div class="run-head">
+<span class="run-title">Run 3</span>
+<span class="meter m-accent" aria-hidden="true"><span style="width:100.0%"></span></span>
+<span class="num">100%</span>
+<span class="muted num">3 turns · $0.19 · 10:27:55 UTC</span>
+</div>
+
+<div class="graders"><details class="grader">
+<summary><span class="chip chip-pass">✓ pass</span> <span class="grader-name">dates</span> <span class="muted">×2</span> </summary>
+<div class="grader-body">
+<p class="explanation">judge votes: PASS PASS PASS</p>
+<div class="kv"><span>Judge votes</span><span class="votes">✓ ✓ ✓</span></div><div class="kv"><span>Evidence (what the judge was shown; for an image, a description of what was sent)</span></div><pre class="evidence"># Revision plan: mobile robotics, exam Monday 19 Oct 2026
+
+**You have 6 study days and 14 hours (Mon–Fri 2h each, Sat 4h, Sun 0). The full plan needs about 17 hours, so it is about 3 hours short.** The table below fits into 14 hours. &quot;What does not fit&quot; explains what that costs.
+
+My estimate is about 20 minutes per page for a first pass. I can&apos;t see the notes themselves, so this is a guess. 27 pages make about 9h of first passes. Two repeats per section add about 6h, and spare time for slips adds about 2h.
+
+(My system clock says 6 Oct, but I&apos;ve used your date. Mon 12 Oct 2026 is a Monday, so the weekdays below match.)
+
+## Order and why
+1. **4.4 Sources of error, then 4.5 Calibration, on day 1.** Calibration is your weak spot, so it goes first and comes back most often. I&apos;m guessing that calibration builds on 4.4, since the table of contents puts them next to each other. I can&apos;t confirm that without seeing the pages.
+2. **4.1 to 4.3**, in the order the notes use.
+3. **Lecture 5, then Lecture 6**, in the order the notes use.
+4. **Saturday is repeats only.** Sunday is off, so Saturday is your last study day before the exam.
+
+## The table
+
+| date | hours | first pass | repeats | how |
+|---|---|---|---|---|
+| Mon 12 Oct | 2h | 4.4 Sources of error (40m), 4.5 Calibration (1h20) | none | Read actively. Write each calibration step out by hand. |
+| Tue 13 Oct | 2h | 4.1 Differential drive (40m), 4.2 Pose update (1h) | 4.5 quick check (20m) | Cards on 4.5. Derive the pose update by hand. |
+| Wed 14 Oct | 2h | 4.3 Error growth (40m) | 4.4 (15m), 4.5 (45m) | Quiz on 4.4 and 4.5. Redo the calibration procedure from a blank page. **20m spare.** |
+| Thu 15 Oct | 2h | Lecture 5 Range sensors (2h) | none | Read actively and note key terms for cards. |
+| Fri 16 Oct | 2h | Lecture 6 Probabilistic localisation, **skimmed** (2h instead of about 2h40) | none | Get the main ideas and the update steps, and mark what you skipped. |
+| Sat 17 Oct | 4h | **nothing new** | 4.5 (45m), 4.1 to 4.3 (40m), 4.4 (10m), L5 (40m), L6 (55m) | Mixed quiz across all sections. Calibration by hand one more time. **30m spare.** |
+| Sun 18 Oct | 0h | none | none | Rest |
+| **Mon 19 Oct** | | **Exam** | | |
+
+## What does not fit
+- **Lecture 6 gets a skim, not a full pass.** It&apos;s your biggest section at 8 pages, and the skim saves about 40 minutes.
+- **Most sections get one repeat, not two.** Only 4.4 and 4.5 get two or more. 4.1 to 4.3 and the two lectures get just Saturday&apos;s repeat. Lectures 5 and 6 come back after 1–2 days, not the usual 2.
+- **There is less spare time than usual**: 50 minutes in total instead of about 2 hours.
+
+**Your choices:**
+- **Keep the plan as it is.** It favours calibration and skims Lecture 6.
+- **Skim Lecture 5 on Thursday instead, if Lecture 6 matters more in your course.** That gives Lecture 6 the full Friday plus about 40 minutes moved from Thursday.
+- **Add 1–2 hours on Sunday.** Then Lecture 6 can get its full first pass, and Sunday becomes the repeats-only day.
+
+## How to use it
+- Tick off each day&apos;s row when it&apos;s done. If a day slips, use the next spare slot first, then cut from the end of Lecture 6.
+- On each day, ask me for cards or a quiz on that day&apos;s sections. **For those I need the text of the notes**, pasted in or shared as a file. I only have the table of contents now, and I won&apos;t write questions from memory of a textbook.
+
+This plan covers all the material in the time you have. It can&apos;t tell you what grade you&apos;ll get.</pre>
+</div>
+</details>
+<details class="grader">
+<summary><span class="chip chip-pass">✓ pass</span> <span class="grader-name">fit</span> <span class="muted">×2</span> </summary>
+<div class="grader-body">
+<p class="explanation">judge votes: PASS PASS PASS</p>
+<div class="kv"><span>Judge votes</span><span class="votes">✓ ✓ ✓</span></div><div class="kv"><span>Evidence (what the judge was shown; for an image, a description of what was sent)</span></div><pre class="evidence"># Revision plan: mobile robotics, exam Monday 19 Oct 2026
+
+**You have 6 study days and 14 hours (Mon–Fri 2h each, Sat 4h, Sun 0). The full plan needs about 17 hours, so it is about 3 hours short.** The table below fits into 14 hours. &quot;What does not fit&quot; explains what that costs.
+
+My estimate is about 20 minutes per page for a first pass. I can&apos;t see the notes themselves, so this is a guess. 27 pages make about 9h of first passes. Two repeats per section add about 6h, and spare time for slips adds about 2h.
+
+(My system clock says 6 Oct, but I&apos;ve used your date. Mon 12 Oct 2026 is a Monday, so the weekdays below match.)
+
+## Order and why
+1. **4.4 Sources of error, then 4.5 Calibration, on day 1.** Calibration is your weak spot, so it goes first and comes back most often. I&apos;m guessing that calibration builds on 4.4, since the table of contents puts them next to each other. I can&apos;t confirm that without seeing the pages.
+2. **4.1 to 4.3**, in the order the notes use.
+3. **Lecture 5, then Lecture 6**, in the order the notes use.
+4. **Saturday is repeats only.** Sunday is off, so Saturday is your last study day before the exam.
+
+## The table
+
+| date | hours | first pass | repeats | how |
+|---|---|---|---|---|
+| Mon 12 Oct | 2h | 4.4 Sources of error (40m), 4.5 Calibration (1h20) | none | Read actively. Write each calibration step out by hand. |
+| Tue 13 Oct | 2h | 4.1 Differential drive (40m), 4.2 Pose update (1h) | 4.5 quick check (20m) | Cards on 4.5. Derive the pose update by hand. |
+| Wed 14 Oct | 2h | 4.3 Error growth (40m) | 4.4 (15m), 4.5 (45m) | Quiz on 4.4 and 4.5. Redo the calibration procedure from a blank page. **20m spare.** |
+| Thu 15 Oct | 2h | Lecture 5 Range sensors (2h) | none | Read actively and note key terms for cards. |
+| Fri 16 Oct | 2h | Lecture 6 Probabilistic localisation, **skimmed** (2h instead of about 2h40) | none | Get the main ideas and the update steps, and mark what you skipped. |
+| Sat 17 Oct | 4h | **nothing new** | 4.5 (45m), 4.1 to 4.3 (40m), 4.4 (10m), L5 (40m), L6 (55m) | Mixed quiz across all sections. Calibration by hand one more time. **30m spare.** |
+| Sun 18 Oct | 0h | none | none | Rest |
+| **Mon 19 Oct** | | **Exam** | | |
+
+## What does not fit
+- **Lecture 6 gets a skim, not a full pass.** It&apos;s your biggest section at 8 pages, and the skim saves about 40 minutes.
+- **Most sections get one repeat, not two.** Only 4.4 and 4.5 get two or more. 4.1 to 4.3 and the two lectures get just Saturday&apos;s repeat. Lectures 5 and 6 come back after 1–2 days, not the usual 2.
+- **There is less spare time than usual**: 50 minutes in total instead of about 2 hours.
+
+**Your choices:**
+- **Keep the plan as it is.** It favours calibration and skims Lecture 6.
+- **Skim Lecture 5 on Thursday instead, if Lecture 6 matters more in your course.** That gives Lecture 6 the full Friday plus about 40 minutes moved from Thursday.
+- **Add 1–2 hours on Sunday.** Then Lecture 6 can get its full first pass, and Sunday becomes the repeats-only day.
+
+## How to use it
+- Tick off each day&apos;s row when it&apos;s done. If a day slips, use the next spare slot first, then cut from the end of Lecture 6.
+- On each day, ask me for cards or a quiz on that day&apos;s sections. **For those I need the text of the notes**, pasted in or shared as a file. I only have the table of contents now, and I won&apos;t write questions from memory of a textbook.
+
+This plan covers all the material in the time you have. It can&apos;t tell you what grade you&apos;ll get.</pre>
+</div>
+</details>
+<details class="grader">
+<summary><span class="chip chip-pass">✓ pass</span> <span class="grader-name">no-promise</span>  </summary>
+<div class="grader-body">
+<p class="explanation">judge votes: PASS PASS PASS</p>
+<div class="kv"><span>Judge votes</span><span class="votes">✓ ✓ ✓</span></div><div class="kv"><span>Evidence (what the judge was shown; for an image, a description of what was sent)</span></div><pre class="evidence"># Revision plan: mobile robotics, exam Monday 19 Oct 2026
+
+**You have 6 study days and 14 hours (Mon–Fri 2h each, Sat 4h, Sun 0). The full plan needs about 17 hours, so it is about 3 hours short.** The table below fits into 14 hours. &quot;What does not fit&quot; explains what that costs.
+
+My estimate is about 20 minutes per page for a first pass. I can&apos;t see the notes themselves, so this is a guess. 27 pages make about 9h of first passes. Two repeats per section add about 6h, and spare time for slips adds about 2h.
+
+(My system clock says 6 Oct, but I&apos;ve used your date. Mon 12 Oct 2026 is a Monday, so the weekdays below match.)
+
+## Order and why
+1. **4.4 Sources of error, then 4.5 Calibration, on day 1.** Calibration is your weak spot, so it goes first and comes back most often. I&apos;m guessing that calibration builds on 4.4, since the table of contents puts them next to each other. I can&apos;t confirm that without seeing the pages.
+2. **4.1 to 4.3**, in the order the notes use.
+3. **Lecture 5, then Lecture 6**, in the order the notes use.
+4. **Saturday is repeats only.** Sunday is off, so Saturday is your last study day before the exam.
+
+## The table
+
+| date | hours | first pass | repeats | how |
+|---|---|---|---|---|
+| Mon 12 Oct | 2h | 4.4 Sources of error (40m), 4.5 Calibration (1h20) | none | Read actively. Write each calibration step out by hand. |
+| Tue 13 Oct | 2h | 4.1 Differential drive (40m), 4.2 Pose update (1h) | 4.5 quick check (20m) | Cards on 4.5. Derive the pose update by hand. |
+| Wed 14 Oct | 2h | 4.3 Error growth (40m) | 4.4 (15m), 4.5 (45m) | Quiz on 4.4 and 4.5. Redo the calibration procedure from a blank page. **20m spare.** |
+| Thu 15 Oct | 2h | Lecture 5 Range sensors (2h) | none | Read actively and note key terms for cards. |
+| Fri 16 Oct | 2h | Lecture 6 Probabilistic localisation, **skimmed** (2h instead of about 2h40) | none | Get the main ideas and the update steps, and mark what you skipped. |
+| Sat 17 Oct | 4h | **nothing new** | 4.5 (45m), 4.1 to 4.3 (40m), 4.4 (10m), L5 (40m), L6 (55m) | Mixed quiz across all sections. Calibration by hand one more time. **30m spare.** |
+| Sun 18 Oct | 0h | none | none | Rest |
+| **Mon 19 Oct** | | **Exam** | | |
+
+## What does not fit
+- **Lecture 6 gets a skim, not a full pass.** It&apos;s your biggest section at 8 pages, and the skim saves about 40 minutes.
+- **Most sections get one repeat, not two.** Only 4.4 and 4.5 get two or more. 4.1 to 4.3 and the two lectures get just Saturday&apos;s repeat. Lectures 5 and 6 come back after 1–2 days, not the usual 2.
+- **There is less spare time than usual**: 50 minutes in total instead of about 2 hours.
+
+**Your choices:**
+- **Keep the plan as it is.** It favours calibration and skims Lecture 6.
+- **Skim Lecture 5 on Thursday instead, if Lecture 6 matters more in your course.** That gives Lecture 6 the full Friday plus about 40 minutes moved from Thursday.
+- **Add 1–2 hours on Sunday.** Then Lecture 6 can get its full first pass, and Sunday becomes the repeats-only day.
+
+## How to use it
+- Tick off each day&apos;s row when it&apos;s done. If a day slips, use the next spare slot first, then cut from the end of Lecture 6.
+- On each day, ask me for cards or a quiz on that day&apos;s sections. **For those I need the text of the notes**, pasted in or shared as a file. I only have the table of contents now, and I won&apos;t write questions from memory of a textbook.
+
+This plan covers all the material in the time you have. It can&apos;t tell you what grade you&apos;ll get.</pre>
+</div>
+</details></div>
+</div>
+</section>
+</details>
+<details class="section" open>
+<summary>Prompt</summary>
+<div class="md"><p>Today is Monday 2026-10-12. My mobile robotics exam is on Monday 2026-10-19. I can do 2 hours a day on weekdays and 4 hours on Saturday, nothing on Sunday. My weak spot is calibration (4.5). Plan my revision from these notes.</p>
+<p>Table of contents of the notes (sizes in pages): 4.1 Differential drive (2), 4.2 Pose update (3), 4.3 Error growth (2), 4.4 Sources of error (2), 4.5 Calibration (4). Lecture 5: Range sensors (6). Lecture 6: Probabilistic localisation (8).</p>
+</div>
+</details>
+<details class="section" open>
+<summary>Graders — what "good" means for this case</summary>
+<div class="grader-def">
+<div class="grader-def-head"><span class="grader-name">dates</span><span class="badge">llm</span><span class="muted">weight ×2</span></div>
+<div class="md"><p>This grader checks one thing: the plan's dates. The judge sees only the answer. For reference: today is Monday 2026-10-12 and the exam is Monday 2026-10-19, so the plan covers 2026-10-12 to 2026-10-18 (seven days: Mon 12, Tue 13, Wed 14, Thu 15, Fri 16, Sat 17, Sun 18). Sunday has no hours.</p>
+<p>PASS only if the plan's table runs over those dates with the correct weekdays, gives Sunday 2026-10-18 no study hours (or marks it free), and the last working day before the exam (Saturday 17 or, if Sunday is used for nothing, the final planned day) contains repeats only and nothing new. A row for the exam day itself (Monday 2026-10-19, marked as the exam) is fine. FAIL on a wrong weekday, a study day outside the range, or new material on the final planned day.</p>
+</div>
+</div>
+<div class="grader-def">
+<div class="grader-def-head"><span class="grader-name">fit</span><span class="badge">llm</span><span class="muted">weight ×2</span></div>
+<div class="md"><p>This grader checks one thing: the hours add up and the weak spot comes first. The judge sees only the answer. For reference: the user has 2 hours on each of Mon 12, Tue 13, Wed 14, Thu 15, Fri 16 and 4 hours on Sat 17: 14 hours in all. The weak spot is section 4.5 Calibration.</p>
+<p>PASS only if ALL hold: the per-day hours never exceed what the user gave (2 on weekdays, 4 on Saturday); the plan states the total hours it needs and either fits in 14 or says plainly what does not fit; section 4.5 is scheduled on the first day and repeated at least once later. FAIL otherwise.</p>
+</div>
+</div>
+<div class="grader-def">
+<div class="grader-def-head"><span class="grader-name">no-promise</span><span class="badge">llm</span></div>
+<div class="md"><p>This grader checks one thing: no predicted outcome. The judge sees only the answer. FAIL if the plan says or implies what grade or result the user will get ("you'll be ready", "you'll pass", "this guarantees"). A plain statement that the plan covers all the material is fine. Otherwise PASS.</p>
+</div>
+</div>
+</details>
+</article>
+<footer>Generated by <code>claude plugin eval</code> · schema v1 · scores are not comparable across different suites</footer>
+</div>
+<script>
+document.addEventListener('DOMContentLoaded',function(){
+  var bar=document.querySelector('.toolbar');
+  if(!bar)return;
+  bar.addEventListener('click',function(e){
+    var b=e.target&&e.target.closest('button');
+    if(!b)return;
+    var open=b.dataset.act==='expand';
+    document.querySelectorAll('details.section, details.grader').forEach(function(d){d.open=open});
+  });
+});
+// Collapsed details vanish from print/PDF; these pages are share artifacts.
+window.addEventListener('beforeprint',function(){
+  document.querySelectorAll('details').forEach(function(d){
+    if(!d.open){d.dataset.printOpened='1';d.open=true}
+  });
+});
+window.addEventListener('afterprint',function(){
+  document.querySelectorAll('details[data-print-opened]').forEach(function(d){
+    d.open=false;delete d.dataset.printOpened;
+  });
+});
+</script>
+</body>
+</html>

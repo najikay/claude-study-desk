@@ -32,16 +32,23 @@ class Rules(unittest.TestCase):
                 "Never put the student's material into a web search.",
                 "Do not guess their level, age or course from their name or their language",
                 "do not state how an exam will be set, what an examiner wants, or what the student's grade will be",
+                "**Real assessments.**",
+                "say that you will not give model answers for it",
+                "**Predictions.**",
+                "say plainly that you cannot predict that",
+                "**A student under strain.**",
+                "**Between conversations** you keep nothing",
+                "your own commentary follows the language the student writes in",
             ):
                 self.assertIn(sentence, text, f"{name}: missing {sentence!r}")
 
     def test_each_skill_keeps_its_own_load_bearing_rule(self):
         for name, sentences in {
-            "study-cards": ["**One fact per card.**", "no yes/no questions, no multiple choice", "Do not fill those gaps yourself.", "question<TAB>answer<TAB>source"],
-            "study-quiz": ["**Keep the answers to yourself**", "Do not hint.", "no percentage", "A question whose answer is not in the material is not a question for this quiz"],
-            "study-grade": ["**Build the model answer from the material** before reading the student's answer", "do not grade against your memory", "No letter grade, no percentage, no \"would probably get\"", "I cannot confirm this from your material"],
-            "study-explain": ["**Start from the material's own words**", "do not rename variables", "say what the analogy does not capture", "**End with one question**"],
-            "study-plan": ["**Ask for today's date and the exam date if either is missing; do not assume the date.**", "do not assume them", "Do not invent sections.", "rather than squeezing the hours", "Do not promise an outcome."],
+            "study-cards": ["**One fact per card.**", "no yes/no questions, no multiple choice", "Do not fill those gaps yourself.", "question<TAB>answer<TAB>source", "with real tab characters between the fields", "Cloze cards go in a second block of their own"],
+            "study-quiz": ["**Keep the answers to yourself**", "Do not hint.", "no percentage", "A question whose answer is not in the material is not a question for this quiz, however good it is: leave it out."],
+            "study-grade": ["**Build the model answer from the material** and settle it before you judge", "do not grade against your memory", "No letter grade, no percentage, no \"would probably get\"", "I cannot confirm this from your material"],
+            "study-explain": ["**Start from the material's own words**", "do not rename variables", "say what the analogy does not capture", "**End with one question**", "is outside content: mark it", "**Only if the material's own account is not enough**"],
+            "study-plan": ["**Ask for today's date and the exam date if either is missing; do not assume the date.**", "do not assume them", "Do not invent sections.", "rather than squeezing the hours", "Do not promise an outcome.", "state the rate you assume as an assumption", "The plan is not kept between conversations"],
             "study-exam": ["**You cannot keep time**", "Ask for the length if missing; do not assume it.", "No percentage, no letter, no \"would pass\"", "do not reuse questions"],
         }.items():
             for s in sentences:
