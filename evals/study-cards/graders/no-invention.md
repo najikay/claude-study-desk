@@ -5,7 +5,7 @@ weight: 2
 
 This grader checks one thing: no card states a fact that the material does not state. The judge sees only the answer.
 
-FAIL if any card's question or answer states as fact: what an encoder is or how it works; what UMBmark stands for; a numeric value for r or L; anything about gyroscopes, IMUs, GPS, Kalman filters, lidar, cameras, visual odometry or SLAM; units for any quantity; or any formula other than the four in the material (dS_L = r*dphi_L, dS_R = r*dphi_R, dS = (dS_R+dS_L)/2, dtheta = (dS_R-dS_L)/L) and the pose update. Text marked "from outside the material" is allowed and is not a violation. Listing a term as undefined (for example that the notes never define "encoder") is correct, not a violation.
+FAIL if any card's question or answer states as fact: what an encoder is or how it works; what UMBmark stands for; a numeric value for r or L; anything about gyroscopes, IMUs, GPS, Kalman filters, lidar, cameras, visual odometry or SLAM; units for any quantity; or any formula other than those in the material (dS_L = r*dphi_L, dS_R = r*dphi_R, dS = (dS_R+dS_L)/2, dtheta = (dS_R-dS_L)/L, the pose update, and position error ≈ d*e from 4.3). Text marked "from outside the material" is allowed and is not a violation. Listing a term as undefined (for example that the notes never define "encoder") is correct, not a violation.
 
 Otherwise PASS.
 
