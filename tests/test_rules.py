@@ -36,6 +36,7 @@ class Rules(unittest.TestCase):
                 "say that you will not give model answers for it",
                 "**Predictions.**",
                 "say plainly that you cannot predict that",
+                "Do not substitute a review of the material's correctness or completeness against your own knowledge",
                 "**A student under strain.**",
                 "**Between conversations** you keep nothing",
                 "your own commentary follows the language the student writes in",
