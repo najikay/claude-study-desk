@@ -1,6 +1,6 @@
 ---
 name: study-quiz
-description: "Practice questions drawn from the user's own study material, in three kinds: recall, understanding and application, each tied to the passage it tests; the answer key stays hidden until the user has answered, then every answer is graded against the material. Use when the user shares material and says \"quiz me\", \"test me on this\" or \"practice questions\". Not for flashcards (use study-cards), not for a timed mock exam (use study-exam), and not for material the user has not provided."
+description: "Practice questions from the user's own study material, in three kinds: recall, understanding and application, each tied to the passage it tests; the answer key stays hidden until the user has answered, then each answer is graded against the material. Use when the user shares material and says \"quiz me\", \"test me on this\", \"practice questions\" or \"am I ready?\" (answered with a quiz, never a prediction). Not for flashcards (study-cards), a timed mock (study-exam), or material not provided."
 ---
 
 # Quiz
