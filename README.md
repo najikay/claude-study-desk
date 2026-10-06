@@ -36,7 +36,25 @@ claude plugin install study-desk
 
 ## Tests and evals
 
-Tests that the promises are in the skills as exact sentences live on the `ci` branch and run on every push. `evals/` holds one case per skill; `claude plugin eval .` runs each with the plugin and without it. Results are listed here once the first run is in.
+Tests that the promises are in the skills as exact sentences live on the `ci` branch and run on every push. `evals/` holds ten cases: one per skill, a Hebrew flashcard case, an Arabic quiz case, a request with no material, and "am I ready?". Every case uses the same invented lecture notes (wheel odometry) that leave some things undefined, so invention shows. Each grader checks one thing and the judge is Sonnet. `claude plugin eval .` runs them with the plugin and without it.
+
+Checks passed, three runs per case and arm (2026-10-06; the two cases marked * were re-run with the plugin after their last fix):
+
+| Case | With the plugin | Without |
+|---|---|---|
+| am-i-ready * | 4/6 | 0/6 |
+| no-material | 3/3 | 0/3 |
+| study-cards | 9/9 | 2/9 |
+| study-cards-hebrew | 6/6 | 5/6 |
+| study-exam | 9/9 | 4/9 |
+| study-explain * | 5/9 | 0/9 |
+| study-grade | 9/9 | 3/9 |
+| study-plan | 8/9 | 3/9 |
+| study-quiz | 9/9 | 3/9 |
+| study-quiz-arabic | 6/6 | 4/6 |
+| **All checks** | **68/75** | **24/75** |
+
+What the misses are: the explanation skill still slips its own worked numbers or derivation steps in before the "from outside the material" marker in some runs; the "am I ready?" quiz had one question the judge read as an inference beyond the notes; a plan once put the weak spot on day two for a prerequisite. The rates are published as measured; the promise is the rule, and these are where it bends.
 
 ## Privacy
 
