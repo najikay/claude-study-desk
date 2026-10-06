@@ -1,0 +1,47 @@
+<p align="center"><img src="assets/banner.png" alt="Study Desk" width="820"></p>
+
+# Study Desk
+
+Six study skills for Claude, every one of them tied to the material you give it. Flashcards, practice questions and mock exams come from your notes, slides, chapter or past paper, each item pointing to the passage it came from; grading says what was right, missing and wrong against that passage; explanations use the material's own terms first and mark anything added from outside.
+
+**The rule of this desk: every question comes from the material.** Nothing is pulled from Claude's memory of a textbook and passed off as your course. Where Claude adds a fact, an example or an analogy of its own, it is labelled `from outside the material:` so you always know which is which. A wrong answer is called wrong, with the passage that shows it.
+
+| Skill | Say | You get |
+|---|---|---|
+| **study-cards** | "make flashcards from this" | A table of cards with their sources, and a tab-separated block that imports straight into Anki |
+| **study-quiz** | "quiz me", "am I ready?" | Recall, understanding and application questions; the key stays hidden until you answer; then each answer graded against the material |
+| **study-grade** | "check my answer", "is this right?" | Right, missing and wrong points with the passage for each; a score as a fraction; one next step |
+| **study-explain** | "I don't get this part" | The concept in the material's own words and order, then a marked analogy, then one question to check it landed |
+| **study-plan** | "exam on the 20th, plan my revision" | A day-by-day table to your date with spaced repeats, fitted to the hours you have; it says what does not fit |
+| **study-exam** | "mock exam" | A paper with marks and a time limit you keep yourself, then a marked result by topic and by question kind |
+
+## Where it runs
+
+Everywhere: the Claude apps (web, desktop, mobile), Claude Code and Cowork. No server, no files, no tools; the skills need nothing but the conversation.
+
+## Install
+
+From the Claude directory: search for Study Desk. In Claude Code:
+
+```
+claude plugin marketplace add najikay/claude-study-desk
+claude plugin install study-desk
+```
+
+## What it will not do
+
+- Work without material. Ask it to quiz you on "chapter 3" with no chapter pasted and it asks for the chapter.
+- Predict your grade, guess what the examiner wants, or keep time during a mock (it tells you to time yourself).
+- Soften a wrong answer, or grade your wording when the question did not ask for it.
+
+## Tests and evals
+
+Tests that the promises are in the skills as exact sentences live on the `ci` branch and run on every push. `evals/` holds one case per skill; `claude plugin eval .` runs each with the plugin and without it. Results are listed here once the first run is in.
+
+## Privacy
+
+See [PRIVACY.md](PRIVACY.md): the plugin collects nothing and sends your material nowhere.
+
+## Licence
+
+Apache-2.0. Copyright 2026 Naji Kayal.

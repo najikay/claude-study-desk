@@ -1,0 +1,26 @@
+{
+  "name": "study-desk",
+  "version": "0.1.0",
+  "description": "Learn material you already have, honestly: flashcards, practice questions and mock exams drawn only from your notes, slides or textbook, each tied to its passage; grading that says what was right, missing and wrong; explanations in the material's own terms; a revision plan to your exam date.",
+  "author": {
+    "name": "Naji Kayal",
+    "url": "https://github.com/najikay"
+  },
+  "homepage": "https://github.com/najikay/claude-study-desk",
+  "repository": "https://github.com/najikay/claude-study-desk",
+  "keywords": [
+    "study",
+    "learning",
+    "flashcards",
+    "anki",
+    "quiz",
+    "exam",
+    "revision",
+    "students",
+    "education"
+  ],
+  "license": "Apache-2.0",
+  "displayName": "Study Desk",
+  "icon": ".claude-plugin/icon.png",
+  "privacyPolicyUrl": "https://github.com/najikay/claude-study-desk/blob/main/PRIVACY.md"
+}

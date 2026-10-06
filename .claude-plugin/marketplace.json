@@ -1,0 +1,33 @@
+{
+  "name": "claude-study-desk",
+  "owner": {
+    "name": "Naji Kayal",
+    "url": "https://github.com/najikay"
+  },
+  "metadata": {
+    "description": "Study Desk: six study skills for Claude (flashcards, quiz, grading, explanation, revision plan, mock exam), every item tied to the student's own material."
+  },
+  "plugins": [
+    {
+      "name": "study-desk",
+      "source": "./",
+      "description": "Learn material you already have, honestly: flashcards, practice questions and mock exams drawn only from your notes, slides or textbook, each tied to its passage; grading that says what was right, missing and wrong; explanations in the material's own terms; a revision plan to your exam date.",
+      "version": "0.1.0",
+      "author": {
+        "name": "Naji Kayal"
+      },
+      "keywords": [
+        "study",
+        "learning",
+        "flashcards",
+        "anki",
+        "quiz",
+        "exam",
+        "revision",
+        "students",
+        "education"
+      ],
+      "license": "Apache-2.0"
+    }
+  ]
+}
