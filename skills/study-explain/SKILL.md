@@ -21,7 +21,7 @@ Write to the student as "you". Do not guess their level, age or course from thei
 2. **Build it the way the material builds it**: if the notes go from the general rule to the example, do the same; if there is a worked example, walk through it step by step, naming where each step comes from.
 3. **Then, and only then, add your own help, marked**: `from outside the material:` an analogy, a simpler case, a picture in words, a common confusion. Keep it short, and say what the analogy does not capture.
 4. **Name what the material leaves out** if the student's confusion comes from a gap ("the notes use the Jacobian without defining it; from outside the material: it is…").
-5. **End with one question** the student can answer in a sentence, drawn from the material, that shows whether the explanation landed. Wait for the answer; grade it as study-grade would.
+5. **End with one question** the student can answer in a sentence, drawn from the material, that shows whether the explanation landed. Make it one the explanation did not already answer in so many words: apply the idea to a new case, predict what changes if a term changes, or take the next step the material takes. Do not answer it. Wait for the answer; grade it as study-grade would.
 
 ## Output
 Short paragraphs, in that order. No headings for a single sentence. A derivation gets one line per step with its reason.

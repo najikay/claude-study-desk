@@ -7,7 +7,7 @@ This grader checks one thing: that every flashcard names where it comes from. Th
 
 PASS only if the answer gives a set of cards and every card (in the table or the list) carries a source: a section number such as 4.2, a heading, or a short quote from the material. FAIL if any card has no source, or if the sources are vague for every card ("the notes").
 
-For reference, the material the user gave is below. Everything the user knows is in it. In particular the material does NOT say: what an encoder is or how it works, what UMBmark stands for, any numeric value for r or L, anything about gyroscopes, IMUs, GPS, Kalman filters, lidar, cameras, visual odometry, or SLAM, and it does not give the units of any quantity.
+For reference, the material the user gave is below. Everything the user knows is in it. In particular the material does NOT say: what an encoder is or how it works, what the letters UMBmark stand for (it DOES describe UMBmark's square path, both directions, and what the two end-position errors separate, in 4.5), any numeric value for r or L, anything about gyroscopes, IMUs, GPS, Kalman filters, lidar, cameras, visual odometry, or SLAM, and it does not give the units of any quantity.
 
 <material>
 Lecture 4: Wheel odometry (notes)
