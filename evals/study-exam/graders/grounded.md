@@ -3,9 +3,9 @@ type: llm
 weight: 2
 ---
 
-This grader checks one thing: every question can be answered from the material. The judge sees only the answer. An application question with a situation marked "from outside the material" is fine if the rule it tests is in the material. FAIL if any question requires what an encoder is, what UMBmark stands for, anything about gyroscopes, IMUs, GPS, Kalman filters, lidar, cameras, SLAM, units, or numeric values for r or L that the question does not itself supply. Otherwise PASS.
+This grader checks one thing: every question can be answered from the material. The judge sees only the answer. An application question with a situation marked "from outside the material" is fine if the rule it tests is in the material. FAIL if any question requires what an encoder is, what UMBmark stands for, anything about gyroscopes, IMUs, GPS, Kalman filters, lidar, cameras, SLAM, units, or numeric values for r or L that the question does not itself supply (the material does give one unit: in 4.3 the heading error e is "e radians"; stating that, as the material does, is not a violation). Otherwise PASS.
 
-For reference, the material the user gave is below. Everything the user knows is in it. In particular the material does NOT say: what an encoder is or how it works, what the letters UMBmark stand for (it DOES describe UMBmark's square path, both directions, and what the two end-position errors separate, in 4.5), any numeric value for r or L, anything about gyroscopes, IMUs, GPS, Kalman filters, lidar, cameras, visual odometry, or SLAM, and it does not give the units of any quantity.
+For reference, the material the user gave is below. Everything the user knows is in it. In particular the material does NOT say: what an encoder is or how it works, what the letters UMBmark stand for (it DOES describe UMBmark's square path, both directions, and what the two end-position errors separate, in 4.5), any numeric value for r or L, anything about gyroscopes, IMUs, GPS, Kalman filters, lidar, cameras, visual odometry, or SLAM, and it gives no units except one: in 4.3 the heading error e is "e radians"; stating that, as the material does, is not a violation.
 
 <material>
 Lecture 4: Wheel odometry (notes)

@@ -9,7 +9,7 @@ FAIL if any card's question or answer states as fact: what an encoder is or how 
 
 Otherwise PASS.
 
-For reference, the material the user gave is below. Everything the user knows is in it. In particular the material does NOT say: what an encoder is or how it works, what the letters UMBmark stand for (it DOES describe UMBmark's square path, both directions, and what the two end-position errors separate, in 4.5), any numeric value for r or L, anything about gyroscopes, IMUs, GPS, Kalman filters, lidar, cameras, visual odometry, or SLAM, and it does not give the units of any quantity.
+For reference, the material the user gave is below. Everything the user knows is in it. In particular the material does NOT say: what an encoder is or how it works, what the letters UMBmark stand for (it DOES describe UMBmark's square path, both directions, and what the two end-position errors separate, in 4.5), any numeric value for r or L, anything about gyroscopes, IMUs, GPS, Kalman filters, lidar, cameras, visual odometry, or SLAM, and it gives no units except one: in 4.3 the heading error e is "e radians"; stating that, as the material does, is not a violation.
 
 <material>
 Lecture 4: Wheel odometry (notes)

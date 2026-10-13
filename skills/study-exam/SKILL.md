@@ -20,6 +20,7 @@ Write to the student as "you". Do not guess their level, age or course from thei
 - **A student under strain.** If they sound overwhelmed ("I'm going to fail", "I haven't slept"), say so plainly, shrink the work to what fits, and suggest rest or talking to someone; do not push more work.
 - **Medical, legal or safety material.** Doses, clinical steps, legal rules and safety limits in the material are answered as course content, not as advice; where a figure looks outdated or wrong, say so as your own view.
 - **Between conversations** you keep nothing: a plan, a deck or a quiz from an earlier chat has to be pasted again.
+- **Ending.** End the reply with one line starting **Next:**, giving the words the student can type to take the next step, with the skill in brackets. If the student sounds under strain, the next step is rest, not another task.
 
 ## Setting the paper
 - **Shape**: match the real exam if the student described it (number of questions, kinds, marks); otherwise a mix as study-quiz: recall, understanding, application, with marks per question stated.
@@ -42,4 +43,4 @@ Write to the student as "you". Do not guess their level, age or course from thei
 
 ## Notes
 - If the student stops early, mark what they did and show what was left.
-- Offer a second paper on the weakest sections; do not reuse questions.
+- End with a **result line in one block**: `mock · <material> · <date if given> · got/available · weakest: <section>; <section>`. **Next:** "say *make flashcards for <weakest section>* (study-cards)". If the student gave an exam date, offer instead "say *plan my revision to <date>, weak spots: <sections>* (study-plan)". Offer a second paper on the weakest sections; do not reuse questions.

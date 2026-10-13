@@ -12,7 +12,7 @@
       "name": "study-desk",
       "source": "./",
       "description": "Learn material you already have, honestly: flashcards, practice questions and mock exams drawn only from your notes, slides or textbook, each tied to its passage; grading that says what was right, missing and wrong; explanations in the material's own terms; a revision plan to your exam date.",
-      "version": "0.1.0",
+      "version": "0.1.1",
       "author": {
         "name": "Naji Kayal"
       },

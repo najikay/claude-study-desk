@@ -4,16 +4,20 @@
 
 Six study skills for Claude, every one of them tied to the material you give it. Flashcards, practice questions and mock exams come from your notes, slides, chapter or past paper, each item pointing to the passage it came from; grading says what was right, missing and wrong against that passage; explanations use the material's own terms first and mark anything added from outside.
 
+**Try it first:** paste a page of your notes and type *make flashcards from this*, or *quiz me on this*.
+
 **The rule of this desk: every question comes from the material.** Nothing is pulled from Claude's memory of a textbook and passed off as your course. Where Claude adds a fact, an example or an analogy of its own, it is labelled `from outside the material:` so you always know which is which. A wrong answer is called wrong, with the passage that shows it.
 
 | Skill | Say | You get |
 |---|---|---|
 | **study-cards** | "make flashcards from this" | A table of cards with their sources, and a tab-separated block that imports straight into Anki |
-| **study-quiz** | "quiz me", "am I ready?" | Recall, understanding and application questions; the key stays hidden until you answer; then each answer graded against the material |
-| **study-grade** | "check my answer", "is this right?" | Right, missing and wrong points with the passage for each; a score as a fraction; one next step |
-| **study-explain** | "I don't get this part" | The concept in the material's own words and order, then a marked analogy, then one question to check it landed |
-| **study-plan** | "exam on the 20th, plan my revision" | A day-by-day table to your date with spaced repeats, fitted to the hours you have; it says what does not fit |
-| **study-exam** | "mock exam" | A paper with marks and a time limit you keep yourself, then a marked result by topic and by question kind |
+| **study-quiz** | "quiz me", "am I ready?" | Recall, understanding and application questions; the key stays hidden until you answer; then each answer graded against the material and a result line to keep |
+| **study-grade** | "check my answer", "is this right?" | Right, missing and wrong points with the passage for each; a score as a fraction; one next step; a card for each gap |
+| **study-explain** | "I don't get this part" | The concept in the material's own words and order, then a marked analogy, then one question to check it landed, then a few cards on the concept |
+| **study-plan** | "exam on the 20th, plan my revision" | A day-by-day table to your date with spaced repeats, fitted to the hours you have, with the words to type each day and a box to tick; it says what does not fit |
+| **study-exam** | "mock exam" | A paper with marks and a time limit you keep yourself, then a marked result by topic and by question kind, and a result line to keep |
+
+Every reply ends with one **Next:** line: the words to type for the next step, and the skill they reach.
 
 ## Where it runs
 

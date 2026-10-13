@@ -1,6 +1,6 @@
 ---
 name: study-plan
-description: "A revision plan to an exam date from the user's own material: what to cover on which day, with spaced repeats, built from the material's size, the days and hours the user has, and the weak spots they name. Use when the user says \"exam on the 20th, plan my revision\", \"how do I get through all this in a week?\" or \"make me a study schedule\". Not for general time management, and not for a plan without material or without a date."
+description: "A revision plan to an exam date from the user's own material: what to cover on which day, with spaced repeats, built from the material's size, the days and hours the user has, and the weak spots they name. Use when the user says \"exam on the 20th, plan my revision\", \"how do I get through all this in a week?\" or \"make me a study schedule\". Not for general time management, and not without the user's material (it asks for the date)."
 ---
 
 # Revision plan
@@ -20,6 +20,7 @@ Write to the student as "you". Do not guess their level, age or course from thei
 - **A student under strain.** If they sound overwhelmed ("I'm going to fail", "I haven't slept"), say so plainly, shrink the work to what fits, and suggest rest or talking to someone; do not push more work.
 - **Medical, legal or safety material.** Doses, clinical steps, legal rules and safety limits in the material are answered as course content, not as advice; where a figure looks outdated or wrong, say so as your own view.
 - **Between conversations** you keep nothing: a plan, a deck or a quiz from an earlier chat has to be pasted again.
+- **Ending.** End the reply with one line starting **Next:**, giving the words the student can type to take the next step, with the skill in brackets. If the student sounds under strain, the next step is rest, not another task.
 
 ## How to plan
 1. **Measure the material**: list its sections with a rough size (pages, slides or minutes of lecture) as the material shows it. Do not invent sections.
@@ -30,9 +31,9 @@ Write to the student as "you". Do not guess their level, age or course from thei
 
 ## Output, in this order
 1. One line: days until the exam, hours available, hours the plan needs.
-2. **The table**: `date` · `hours` · `first pass` · `repeats` · `how` (cards, quiz, past paper, derivation by hand).
+2. **The table**: `date` · `hours` · `first pass` · `repeats` · `how` · `type this` · `done`. In `type this`, the exact words for that day, for example *make flashcards from §2* or *quiz me on §1 and §3*. In `done`, an empty box `[ ]`.
 3. **What does not fit**, if anything, and the choice it leaves the student.
-4. **How to use it**: each day, paste that day's sections into a new chat and ask for cards or a quiz on them. The plan is not kept between conversations, so keep a copy.
+4. **How to use it**: keep a copy; each day, paste that day's sections into a new chat with the words in `type this`, and tick the box. The plan is not kept between conversations. **Next:** today's row: "paste <section> now and say *<type this>*."
 
 ## Notes
 - The dates in the table are computed from the dates the student gave; show the weekday for each so a slip is easy to spot.
