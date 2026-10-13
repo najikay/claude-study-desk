@@ -42,23 +42,25 @@ claude plugin install study-desk
 
 Tests that the promises are in the skills as exact sentences live on the `ci` branch and run on every push. `evals/` holds ten cases: one per skill, a Hebrew flashcard case, an Arabic quiz case, a request with no material, and "am I ready?". Every case uses the same invented lecture notes (wheel odometry) that leave some things undefined, so invention shows. Each grader checks one thing and the judge is Sonnet. `claude plugin eval .` runs them with the plugin and without it.
 
-Checks passed, three runs per case and arm (2026-10-06; the two cases marked * were re-run with the plugin after their last fix):
+Checks passed with the plugin, three runs per case, Sonnet judge. The first column is the 0.1.0 figure published on 2026-10-06; the second is the same 0.1.0 skills re-run on 2026-10-13 against today's graders (two graders were corrected: the notes do give one unit, "e radians"); the third is 0.1.1 on the same graders (study-exam re-run after a network timeout, study-explain after its last fix):
 
-| Case | With the plugin | Without |
-|---|---|---|
-| am-i-ready * | 4/6 | 0/6 |
-| no-material | 3/3 | 0/3 |
-| study-cards | 9/9 | 2/9 |
-| study-cards-hebrew | 6/6 | 5/6 |
-| study-exam | 9/9 | 4/9 |
-| study-explain * | 5/9 | 0/9 |
-| study-grade | 9/9 | 3/9 |
-| study-plan | 8/9 | 3/9 |
-| study-quiz | 9/9 | 3/9 |
-| study-quiz-arabic | 6/6 | 4/6 |
-| **All checks** | **68/75** | **24/75** |
+| Case | 0.1.0, published 2026-10-06 | 0.1.0 control, 2026-10-13 | 0.1.1, 2026-10-13 |
+|---|---|---|---|
+| am-i-ready | 4/6 | 3/6 | 3/6 |
+| no-material | 3/3 | 3/3 | 3/3 |
+| study-cards | 9/9 | 8/9 | 8/9 |
+| study-cards-hebrew | 6/6 | 6/6 | 6/6 |
+| study-exam | 9/9 | 7/9 | 8/9 |
+| study-explain | 5/9 | 7/9 | 6/9 |
+| study-grade | 9/9 | 9/9 | 9/9 |
+| study-plan | 8/9 | 9/9 | 9/9 |
+| study-quiz | 9/9 | 8/9 | 7/9 |
+| study-quiz-arabic | 6/6 | 6/6 | 6/6 |
+| **All checks** | **68/75** | **66/75** | **65/75** |
 
-What the misses are: the explanation skill still slips its own worked numbers or derivation steps in before the "from outside the material" marker in some runs; the "am I ready?" quiz had one question the judge read as an inference beyond the notes; a plan once put the weak spot on day two for a prerequisite. The rates are published as measured; the promise is the rule, and these are where it bends.
+The judge varies by about ±2 checks between runs of the same skills, so the older 68/75 is withdrawn as the headline; read the last two columns side by side. The new check that every reply ends with a Next line naming the words to type passes 28/30 with 0.1.1.
+
+What the misses are: the explanation skill still slips some of its own reasoning before the "from outside the material" marker in some runs; the "am I ready?" quiz sometimes has a question the judge reads as an inference beyond the notes; a quiz now and then asks something the notes only imply. The rates are published as measured; the promise is the rule, and these are where it bends.
 
 ## Privacy
 

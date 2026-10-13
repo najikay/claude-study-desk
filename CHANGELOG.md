@@ -10,6 +10,8 @@
 - study-exam: a result line in one block; Next is cards for the weakest section, or a plan when an exam date was given.
 - README: a "Try it first" line on the first screen.
 - Evals: every case gains a grader that the reply ends with a Next line (in the student's language for the Hebrew and Arabic cases).
+- Fixes found by the evals: the quiz asks no direction, sign, unit or convention the notes do not state; the cards' gap list names what is missing without guessing; the explain check question asks one thing, and the explanation opens by quoting the passage asked about. Two graders corrected (the notes do give one unit, "e radians"); the grade next-step grader no longer counts the Next line as a second step.
+- README: the eval table shows the published 0.1.0 figure, a 0.1.0 control re-run on today's graders, and 0.1.1 side by side.
 
 ## 0.1.0 — 2026-10-06
 - First release: study-cards, study-quiz, study-grade, study-explain, study-plan, study-exam.
