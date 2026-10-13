@@ -40,17 +40,18 @@ class Rules(unittest.TestCase):
                 "**A student under strain.**",
                 "**Between conversations** you keep nothing",
                 "your own commentary follows the language the student writes in",
+                "- **Ending.** End the reply with one line starting **Next:**, giving the words the student can type to take the next step, with the skill in brackets. If the student sounds under strain, the next step is rest, not another task.",
             ):
                 self.assertIn(sentence, text, f"{name}: missing {sentence!r}")
 
     def test_each_skill_keeps_its_own_load_bearing_rule(self):
         for name, sentences in {
-            "study-cards": ["**One fact per card.**", "no yes/no questions, no multiple choice", "Do not fill those gaps yourself.", "question<TAB>answer<TAB>source", "with real tab characters between the fields", "Cloze cards go in a second block of their own"],
-            "study-quiz": ["**Keep the answers to yourself**", "Do not hint.", "no percentage", "A question whose answer is not in the material is not a question for this quiz, however good it is: leave it out."],
-            "study-grade": ["**Build the model answer from the material** and settle it before you judge", "do not grade against your memory", "No letter grade, no percentage, no \"would probably get\"", "I cannot confirm this from your material"],
-            "study-explain": ["**Start from the material's own words**", "do not rename variables", "say what the analogy does not capture", "**End with one question**", "is outside content, and so are worked numbers of your own", "**Only if the material's own account is not enough**"],
-            "study-plan": ["**Ask for today's date and the exam date if either is missing; do not assume the date.**", "do not assume them", "Do not invent sections.", "rather than squeezing the hours", "Do not promise an outcome.", "state the rate you assume as an assumption", "The plan is not kept between conversations"],
-            "study-exam": ["**You cannot keep time**", "Ask for the length if missing; do not assume it.", "No percentage, no letter, no \"would pass\"", "do not reuse questions"],
+            "study-cards": ["**One fact per card.**", "no yes/no questions, no multiple choice", "Do not fill those gaps yourself.", "question<TAB>answer<TAB>source", "with real tab characters between the fields", "Cloze cards go in a second block of their own", "*quiz me on this* (study-quiz)", "*plan my revision to <date>* (study-plan)"],
+            "study-quiz": ["**Keep the answers to yourself**", "Do not hint.", "no percentage", "A question whose answer is not in the material is not a question for this quiz, however good it is: leave it out.", "**result line in one block**", "*make flashcards from the ones I missed* (study-cards)", "which stays last"],
+            "study-grade": ["**Build the model answer from the material** and settle it before you judge", "do not grade against your memory", "No letter grade, no percentage, no \"would probably get\"", "I cannot confirm this from your material", "for each point marked missing or wrong, one flashcard in an Anki block", "6. **Next:**"],
+            "study-explain": ["**Start from the material's own words**", "do not rename variables", "say what the analogy does not capture", "**End with one question**", "is outside content, and so are worked numbers of your own", "**Only if the material's own account is not enough**", "**two to four flashcards** on the concept", "*quiz me on this section* (study-quiz)"],
+            "study-plan": ["**Ask for today's date and the exam date if either is missing; do not assume the date.**", "do not assume them", "Do not invent sections.", "rather than squeezing the hours", "Do not promise an outcome.", "state the rate you assume as an assumption", "The plan is not kept between conversations", "`type this` · `done`", "In `done`, an empty box `[ ]`.", "**Next:** today's row"],
+            "study-exam": ["**You cannot keep time**", "Ask for the length if missing; do not assume it.", "No percentage, no letter, no \"would pass\"", "do not reuse questions", "**result line in one block**", "*make flashcards for <weakest section>* (study-cards)"],
         }.items():
             for s in sentences:
                 self.assertIn(s, body(name), f"{name}: missing {s!r}")
